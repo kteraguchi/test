@@ -1,46 +1,17 @@
-LikeBehavior
+LikeHelper
 ===============
 
-Like Behavior
+Like Helper
 
-使用するプラグインのコンテンツモデルにLikeモデル、LikesUserモデルの
-アソシエーションを設定します。<br>
-fieldオプションの指定がない場合は全データを取得しますが、<br>
-fieldオプションを個別に指定する場合は、Likeモデルのfieldも明示的に指定してください。<br>
-
-#### ContentModel
-```
-class BbsArticle extends BbsesAppModel {
-	public $actsAs = array(
-		'Likes.Like'
-	)
-}
-```
-#### ContentController
-```
-$bbsArticle = $this->BbsArticle->find('list');
-```
-#### ResultSample
-```
-$bbsArticle = array(
-	'BbsArticle' => array(...),
-	'Likes' => array(
-		'id' => '999',
-		'plugin_key' => 'abcdefg',
-		'block_key' => 'abcdefg',
-		'content_key' => 'abcdefg',
-		'like_count' => '9',
-		'unlike_count' => '9',
-	)
-)
-```
-
-設定オプションは[setupメソッド](https://github.com/NetCommons3/NetCommons3Docs/blob/master/phpdocMd/Likes/LikeBehavior.md#setup)を参照
+イイネ！、ヤダネ！の画面表示機能を提供します。<br>
+* イイネ！、ヤダネ！使用設定表示:[settingメソッド](#setting)<br>
+* イイネ！、ヤダネ！表示のみ（クリックできない）:[displayメソッド](#display)<br>
+* イイネ！、ヤダネ！ボタン表示:[buttonsメソッド](#buttons)<br>
 
 
-* Class name: LikeBehavior
+* Class name: LikeHelper
 * Namespace: 
-* Parent class: ModelBehavior
+* Parent class: [AppHelper](AppHelper.md)
 
 
 
@@ -50,64 +21,113 @@ Properties
 ----------
 
 
-### $__model
+### $helpers
 
-    private array $__model
+    public array $helpers = array('Html', 'Form', 'NetCommons.NetCommonsForm', 'NetCommons.NetCommonsHtml', 'NetCommons.Token')
 
-Model name
-
-
-
-* Visibility: **private**
-
-
-### $__field
-
-    private array $__field
-
-Key field name
+Other helpers used by FormHelper
 
 
 
-* Visibility: **private**
+* Visibility: **public**
 
 
 Methods
 -------
 
 
-### setup
+### beforeRender
 
-    void LikeBehavior::setup(object $model, array $config)
+    void LikeHelper::beforeRender(string $viewFile)
 
-SetUp behavior
+Before render callback. beforeRender is called before the view file is rendered.
 
-Likeモデル、LikesUserモデルのアソシエーションで、別モデル、別フィールド名を指定することがます。<br>
-デフォルト値は、モデル名が呼び出し元名称(aliasが正しいと思う→要調査)、フィールド名が"key"になっています。
-
-* Visibility: **public**
-
-
-#### Arguments
-* $model **object** - &lt;p&gt;instance of model&lt;/p&gt;
-* $config **array** - &lt;p&gt;array of configuration settings.&lt;/p&gt;
-
-
-
-### beforeFind
-
-    boolean|array LikeBehavior::beforeFind(\Model $model, array $query)
-
-beforeFind can be used to cancel find operations, or modify the query that will be executed.
-
-By returning null/false you can abort a find. By returning an array you can modify/replace the query
-that is going to be run.
+Overridden in subclasses.
 
 * Visibility: **public**
 
 
 #### Arguments
-* $model **Model** - &lt;p&gt;Model using this behavior&lt;/p&gt;
-* $query **array** - &lt;p&gt;Data used to execute this query, i.e. conditions, order, etc.&lt;/p&gt;
+* $viewFile **string** - &lt;p&gt;The view file that is going to be rendered&lt;/p&gt;
+
+
+
+### setting
+
+    string LikeHelper::setting(string $likeFieldName, string $unlikeFieldName, array $attributes)
+
+Output use like setting element
+
+イイネ！、ヤダネ！使用設定HTMLを返します。<br>
+使用有無のフィールド名を指定してください。<br>
+(フィールド名は、use_like,use_unlike固定で良いのでは？)
+
+#### Sample code
+##### template file(ctp file)
+```
+<?php echo $this->Like->setting('BbsSetting.use_like', 'BbsSetting.use_unlike');
+```
+
+* Visibility: **public**
+
+
+#### Arguments
+* $likeFieldName **string** - &lt;p&gt;This should be &quot;Modelname.fieldname&quot; for use_like field&lt;/p&gt;
+* $unlikeFieldName **string** - &lt;p&gt;This should be &quot;Modelname.fieldname&quot; for use_unlike field&lt;/p&gt;
+* $attributes **array** - &lt;p&gt;Array of attributes and HTML arguments.&lt;/p&gt;
+
+
+
+### display
+
+    string LikeHelper::display(array $setting, array $content, array $attributes)
+
+Output like and unlike display element
+
+イイネ！、ヤダネ！表示HTMLを返します。(表示のみでクリックできません)<br>
+設定データ配列、コンテンツデータ配列を指定してください。<br>
+設定データ配列のuse_like,use_unlikeを判断し、コンテンツデータ配列のLike.unlike_countを表示します。
+
+#### Sample code
+##### template file(ctp file)
+```
+<?php echo $this->Like->buttons($bbsSetting, $bbsArticle); ?>
+```
+
+* Visibility: **public**
+
+
+#### Arguments
+* $setting **array** - &lt;p&gt;Array of use like setting data.&lt;/p&gt;
+* $content **array** - &lt;p&gt;Array of content data with like count.&lt;/p&gt;
+* $attributes **array** - &lt;p&gt;Array of attributes and HTML arguments.&lt;/p&gt;
+
+
+
+### buttons
+
+    string LikeHelper::buttons(array $model, array $setting, array $content, array $attributes)
+
+Output like and unlike buttons element
+
+イイネ！、ヤダネ！ボタンHTMLを返します。<br>
+コンテンツモデル名、設定データ配列、コンテンツデータ配列を指定してください。<br>
+設定データ配列のuse_like,use_unlikeを判断し、コンテンツデータ配列のLike.unlike_countを表示します。
+コンテンツデータ配列のコンテンツモデル名.keyでカウントデータを更新します。
+
+#### Sample code
+##### template file(ctp file)
+```
+<?php echo $this->Like->buttons('BbsArticle', $bbsSetting, $bbsArticle); ?>
+```
+
+* Visibility: **public**
+
+
+#### Arguments
+* $model **array** - &lt;p&gt;String of model name&lt;/p&gt;
+* $setting **array** - &lt;p&gt;Array of use like setting data.&lt;/p&gt;
+* $content **array** - &lt;p&gt;Array of content data with like count.&lt;/p&gt;
+* $attributes **array** - &lt;p&gt;Array of attributes and HTML arguments.&lt;/p&gt;
 
 
