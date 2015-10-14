@@ -35,6 +35,8 @@ $bbsArticle = array(
 )
 ```
 
+設定オプションは[setupメソッド](https://github.com/NetCommons3/NetCommons3Docs/blob/master/phpdocMd/Likes/LikeBehavior.md#setup)を参照
+
 
 * Class name: LikeBehavior
 * Namespace: 
@@ -80,7 +82,8 @@ Methods
 
 SetUp behavior
 
-
+Likeモデル、LikesUserモデルのアソシエーションで、別モデル、別フィールド名を指定することがます。<br>
+デフォルト値は、モデル名が呼び出し元名称(aliasが正しいと思う→要調査)、フィールド名が"key"になっています。
 
 * Visibility: **public**
 
