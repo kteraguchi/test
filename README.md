@@ -1,17 +1,69 @@
-LikeHelper
+PermissionComponent
 ===============
 
-Like Helper
+Permission Component
 
-イイネ！、ヤダネ！の画面表示機能を提供します。<br>
-* イイネ！、ヤダネ！使用設定表示:[settingメソッド](#setting)<br>
-* イイネ！、ヤダネ！表示のみ（クリックできない）:[displayメソッド](#display)<br>
-* イイネ！、ヤダネ！ボタン表示:[buttonsメソッド](#buttons)<br>
+リクエストされたController、もしくは、actionのアクセス許可を、<br>
+Currentオブジェクトの権限から判定します。
+チェックタイプと許可アクションリストを渡してください。
+
+[チェックタイプ](#type)
+[許可アクションリスト](#allow)
 
 
-* Class name: LikeHelper
+* Class name: PermissionComponent
 * Namespace: 
-* Parent class: [AppHelper](AppHelper.md)
+* Parent class: Component
+
+
+
+Constants
+----------
+
+
+### READABLE_PERMISSION
+
+    const READABLE_PERMISSION = 'content_readable'
+
+
+
+
+
+### CHECK_TYEP_GENERAL_PLUGIN
+
+    const CHECK_TYEP_GENERAL_PLUGIN = 'general_plugin'
+
+
+
+
+
+### CHECK_TYEP_CONTROL_PANEL
+
+    const CHECK_TYEP_CONTROL_PANEL = 'control_panel'
+
+
+
+
+
+### CHECK_TYEP_USER_PLUGIN
+
+    const CHECK_TYEP_USER_PLUGIN = 'user_plugin'
+
+
+
+
+
+### CHECK_TYEP_ROOM_PLUGIN
+
+    const CHECK_TYEP_ROOM_PLUGIN = 'room_plugin'
+
+
+
+
+
+### CHECK_TYEP_SYSTEM_PLUGIN
+
+    const CHECK_TYEP_SYSTEM_PLUGIN = 'system_plugin'
 
 
 
@@ -21,13 +73,79 @@ Properties
 ----------
 
 
-### $helpers
+### $type
 
-    public array $helpers = array('Html', 'Form', 'NetCommons.NetCommonsForm', 'NetCommons.NetCommonsHtml', 'NetCommons.Token')
+    public string $type = self::CHECK_TYEP_GENERAL_PLUGIN
 
-Other helpers used by FormHelper
+チェックタイプ
+
+* CHECK_TYEP_GENERAL_PLUGIN
+ページに配置するプラグインの場合に使用します。（デフォルト）<br>
+許可アクションリストに指定された権限から判定します。
+
+* CHECK_TYEP_CONTROL_PANEL
+コントロールパネルを表示する際に使用します。
+コントロールパネルで動作するプラグインの有無で判定します。
+
+* CHECK_TYEP_USER_PLUGIN
+？？？
+
+* CHECK_TYEP_ROOM_PLUGIN
+？？？
+
+* CHECK_TYEP_SYSTEM_PLUGIN
+？？？
+ユーザーが使用できるプラグインか否かで判定します。
+
+* Visibility: **public**
 
 
+### $allow
+
+    public array $allow = array('index,view' => null)
+
+許可アクションリスト
+
+チェックタイプがCHECK_TYEP_GENERAL_PLUGINの場合に使用される判定リストです。
+アクション名 => 権限名の形式で指定してください。
+デフォルトでは、indexアクション、viewアクションを許可しています。
+#### サンプルコード
+##### Controller
+```
+public $components = array(
+	'NetCommons.Permission' => array(
+		'allow' => array(
+			'add,edit,delete' => 'content_creatable',
+			'reply' => 'content_comment_creatable',
+			'approve' => 'content_comment_publishable',
+		)
+	)
+)
+```
+アクション名に'＊'を指定するとコントローラ内すべてのアクションが対象になります。
+#### サンプルコード
+##### Controller
+```
+public $components = array(
+	'NetCommons.Permission' => array(
+		'allow' => array(
+			'*' => 'content_creatable'
+		)
+	)
+)
+```
+権限名にnullを指定するとアクセスが許可されます。
+#### サンプルコード
+##### Controller
+```
+public $components = array(
+	'NetCommons.Permission' => array(
+		'allow' => array(
+			'add,edit,delete' => 'null'
+		)
+	)
+)
+```
 
 * Visibility: **public**
 
@@ -36,98 +154,34 @@ Methods
 -------
 
 
-### beforeRender
+### initialize
 
-    void LikeHelper::beforeRender(string $viewFile)
+    void PermissionComponent::initialize(\Controller $controller)
 
-Before render callback. beforeRender is called before the view file is rendered.
+Called before the Controller::beforeFilter().
 
-Overridden in subclasses.
+
 
 * Visibility: **public**
 
 
 #### Arguments
-* $viewFile **string** - &lt;p&gt;The view file that is going to be rendered&lt;/p&gt;
+* $controller **Controller** - &lt;p&gt;Instantiating controller&lt;/p&gt;
 
 
 
-### setting
+### startup
 
-    string LikeHelper::setting(string $likeFieldName, string $unlikeFieldName, array $attributes)
+    void PermissionComponent::startup(\Controller $controller)
 
-Output use like setting element
+Called after the Controller::beforeFilter() and before the controller action
 
-イイネ！、ヤダネ！使用設定HTMLを返します。<br>
-使用有無のフィールド名を指定してください。<br>
-(フィールド名は、use_like,use_unlike固定で良いのでは？)
 
-#### Sample code
-##### template file(ctp file)
-```
-<?php echo $this->Like->setting('BbsSetting.use_like', 'BbsSetting.use_unlike');
-```
 
 * Visibility: **public**
 
 
 #### Arguments
-* $likeFieldName **string** - &lt;p&gt;This should be &quot;Modelname.fieldname&quot; for use_like field&lt;/p&gt;
-* $unlikeFieldName **string** - &lt;p&gt;This should be &quot;Modelname.fieldname&quot; for use_unlike field&lt;/p&gt;
-* $attributes **array** - &lt;p&gt;Array of attributes and HTML arguments.&lt;/p&gt;
-
-
-
-### display
-
-    string LikeHelper::display(array $setting, array $content, array $attributes)
-
-Output like and unlike display element
-
-イイネ！、ヤダネ！表示HTMLを返します。(表示のみでクリックできません)<br>
-設定データ配列、コンテンツデータ配列を指定してください。<br>
-設定データ配列のuse_like,use_unlikeを判断し、コンテンツデータ配列のLike.unlike_countを表示します。
-
-#### Sample code
-##### template file(ctp file)
-```
-<?php echo $this->Like->buttons($bbsSetting, $bbsArticle); ?>
-```
-
-* Visibility: **public**
-
-
-#### Arguments
-* $setting **array** - &lt;p&gt;Array of use like setting data.&lt;/p&gt;
-* $content **array** - &lt;p&gt;Array of content data with like count.&lt;/p&gt;
-* $attributes **array** - &lt;p&gt;Array of attributes and HTML arguments.&lt;/p&gt;
-
-
-
-### buttons
-
-    string LikeHelper::buttons(array $model, array $setting, array $content, array $attributes)
-
-Output like and unlike buttons element
-
-イイネ！、ヤダネ！ボタンHTMLを返します。<br>
-コンテンツモデル名、設定データ配列、コンテンツデータ配列を指定してください。<br>
-設定データ配列のuse_like,use_unlikeを判断し、コンテンツデータ配列のLike.unlike_countを表示します。
-コンテンツデータ配列のコンテンツモデル名.keyでカウントデータを更新します。
-
-#### Sample code
-##### template file(ctp file)
-```
-<?php echo $this->Like->buttons('BbsArticle', $bbsSetting, $bbsArticle); ?>
-```
-
-* Visibility: **public**
-
-
-#### Arguments
-* $model **array** - &lt;p&gt;String of model name&lt;/p&gt;
-* $setting **array** - &lt;p&gt;Array of use like setting data.&lt;/p&gt;
-* $content **array** - &lt;p&gt;Array of content data with like count.&lt;/p&gt;
-* $attributes **array** - &lt;p&gt;Array of attributes and HTML arguments.&lt;/p&gt;
+* $controller **Controller** - &lt;p&gt;Controller with components to startup&lt;/p&gt;
 
 
