@@ -7,7 +7,7 @@ Permission Component
 Currentオブジェクトの権限から判定します。
 チェックタイプと許可アクションリストを渡してください。
 
-[チェックタイプ](#type)
+[チェックタイプ](#type)<br>
 [許可アクションリスト](#allow)
 
 
@@ -79,22 +79,22 @@ Properties
 
 チェックタイプ
 
-* CHECK_TYEP_GENERAL_PLUGIN
+* CHECK_TYEP_GENERAL_PLUGIN<br>
 ページに配置するプラグインの場合に使用します。（デフォルト）<br>
 許可アクションリストに指定された権限から判定します。
 
-* CHECK_TYEP_CONTROL_PANEL
-コントロールパネルを表示する際に使用します。
+* CHECK_TYEP_CONTROL_PANEL<br>
+コントロールパネルを表示する際に使用します。<br>
 コントロールパネルで動作するプラグインの有無で判定します。
 
-* CHECK_TYEP_USER_PLUGIN
+* CHECK_TYEP_USER_PLUGIN<br>
 ？？？
 
-* CHECK_TYEP_ROOM_PLUGIN
+* CHECK_TYEP_ROOM_PLUGIN<br>
 ？？？
 
-* CHECK_TYEP_SYSTEM_PLUGIN
-？？？
+* CHECK_TYEP_SYSTEM_PLUGIN<br>
+？？？<br>
 ユーザーが使用できるプラグインか否かで判定します。
 
 * Visibility: **public**
@@ -106,8 +106,8 @@ Properties
 
 許可アクションリスト
 
-チェックタイプがCHECK_TYEP_GENERAL_PLUGINの場合に使用される判定リストです。
-アクション名 => 権限名の形式で指定してください。
+チェックタイプがCHECK_TYEP_GENERAL_PLUGINの場合に使用される判定リストです。<br>
+アクション名 => 権限名の形式で指定してください。<br>
 デフォルトでは、indexアクション、viewアクションを許可しています。
 #### サンプルコード
 ##### Controller
