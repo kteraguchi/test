@@ -122,9 +122,8 @@ public $components = array(
 	)
 )
 ```
+
 アクション名に'＊'を指定するとコントローラ内すべてのアクションが対象になります。
-#### サンプルコード
-##### Controller
 ```
 public $components = array(
 	'NetCommons.Permission' => array(
@@ -134,9 +133,8 @@ public $components = array(
 	)
 )
 ```
+
 権限名にnullを指定するとアクセスが許可されます。
-#### サンプルコード
-##### Controller
 ```
 public $components = array(
 	'NetCommons.Permission' => array(
