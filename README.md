@@ -5,9 +5,9 @@ NetCommonsApp Model
 
 CakePHPのModelクラスを継承してます。
 #### Overrideしているメソッド
-[__construct](#__construct)
-[setDataSource](#setDataSource)
-[create](#create)
+[__construct](#__construct)<br>
+[setDataSource](#setdatasource)<br>
+[create](#create)<br>
 
 
 * Class name: NetCommonsAppModel
@@ -83,10 +83,11 @@ can also be an array of options, see above.&lt;/p&gt;
 
     void NetCommonsAppModel::setDataSource(string $dataSource)
 
-Sets the DataSource to which this model is bound.
-
+Sets the DataSource to which this model is bound.<br>
 データの書き込み時はMaterDBに対して行うため、接続先DBを変更しているが、<br>
 Test実行時は唯一のDBに対して行うようにOverrideしています。
+
+
 
 * Visibility: **public**
 
@@ -100,14 +101,21 @@ Test実行時は唯一のDBに対して行うようにOverrideしています。
 
     array NetCommonsAppModel::create(boolean|array $data, boolean $filterKey)
 
-Initializes the model for writing a new record, loading the default values
-for those fields that are not defined in $data, and clearing previous validation errors.
-
-Especially helpful for saving data in loops.
-
 NetCommonsで使用する共通の値がセットされた結果を返します。<br>
 CakePHPのSchemaは、not null指定されたカラムのdefaultがnullになっているため、<br>
-''(長さ0の文字列)に書き換えています。
+''(長さ0の文字列)に書き換えています。<br>
+https://github.com/NetCommons3/NetCommons3/issues/7
+
+#### セットされるデータ
+```
+'room_id' => Current::read('Room.id'),
+'language_id' => Current::read('Language.id'),
+'block_id' => Current::read('Block.id'),
+'block_key' => Current::read('Block.key'),
+'frame_id' => Current::read('Frame.id'),
+'frame_key' => Current::read('Frame.key'),
+'plugin_key' => Inflector::underscore($this->plugin),
+```
 
 * Visibility: **public**
 
