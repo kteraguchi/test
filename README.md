@@ -4,9 +4,10 @@ Current
 Current Utility
 
 NetCommonsの機能として必要な情報を保持します。<br>
-[NetCommonsAppController::beforeFilter](https://github.com/NetCommons3/NetCommons3Docs/blob/master/phpdocMd/NetCommons/NetCommonsAppController.md)
+[NetCommonsAppController::beforeFilter](https://github.com/NetCommons3/NetCommons3Docs/blob/master/phpdocMd/NetCommons/NetCommonsAppController.md#beforefilter)
 で初期処理が呼び出され、値が設定されます。<br>
-値を参照する際は、[readメソッド](#read)を使用します。
+値を取得する時は、[readメソッド](#read)を使用します。<br>
+権限を取得する時は、[permissionメソッド](#permission)を使用します。<br>
 
 #### 保持データ
 ```
