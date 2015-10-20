@@ -1,229 +1,18 @@
-Current
+NetCommonsAppModel
 ===============
 
-Current Utility
+NetCommonsApp Model
 
-NetCommonsの機能として必要な情報を保持します。<br>
-[NetCommonsAppController::beforeFilter](https://github.com/NetCommons3/NetCommons3Docs/blob/master/phpdocMd/NetCommons/NetCommonsAppController.md#beforefilter)
-で初期処理が呼び出され、値が設定されます。<br>
-値を取得する時は、[readメソッド](#read)を使用します。<br>
-権限を取得する時は、[permissionメソッド](#permission)を使用します。<br>
-
-#### 保持データ
-```
-Array(
-	[User] => Array(
-		[id] => 1
-		[username] => admin
-		[key] => 640f981d6104fd21463d674f18477348
-		[avatar] =>
-		[avatar_file_id] =>
-		[is_avatar_public] =>
-		[handlename] => admin
-		[is_handlename_public] =>
-		[is_name_public] =>
-		[email] =>
-		[is_email_public] =>
-
-		・・・
-
-		[Role] => Array(
-			[id] => 1
-			[language_id] => 2
-			[key] => system_administrator
-			[type] => 1
-			[name] => システム管理者
-			[is_systemized] => 1
-		)
-	)
-
-	[Language] => Array(
-		[id] => 2
-		[code] => ja
-		[weight] => 2
-		[is_active] => 1
-	)
-
-	[PluginsRole] => Array(
-		[13] => Array(
-			[id] => 13
-			[role_key] => system_administrator
-			[plugin_key] => rooms
-		)
-
-		[20] => Array(
-			[id] => 20
-			[role_key] => system_administrator
-			[plugin_key] => user_manager
-		)
-
-	)
-
-	[Page] => Array(
-		[id] => 1
-		[room_id] => 1
-		[parent_id] =>
-		[lft] => 1
-		[rght] => 2
-		[permalink] =>
-		[slug] =>
-		[is_published] => 1
-		[from] =>
-		[to] =>
-		[is_container_fluid] =>
-	)
-
-	[Room] => Array(
-		[id] => 1
-		[space_id] => 2
-		[page_id_top] => 1
-		[root_id] =>
-		[parent_id] =>
-		[lft] => 1
-		[rght] => 2
-		[active] => 1
-		[default_role_key] => visitor
-		[need_approval] => 1
-		[default_participation] => 1
-		[page_layout_permitted] => 1
-	)
-
-	[ParentPage] => Array(
-		・・・
-	)
-
-	[RolesRoomsUser] => Array(
-		・・・
-	)
-
-	[RolesRoom] => Array(
-		・・・
-	)
-
-・・・
-
-	[Permission] => Array(
-		[page_editable] => Array(
-			[id] => 9
-			[role_key] => room_administrator
-			[type] => room_role
-			[permission] => page_editable
-			[value] => 1
-			[fixed] => 1
-			[roles_room_id] => 1
-		)
-
-		[block_editable] => Array(
-			・・・
-		)
-
-		[content_readable] => Array(
-			・・・
-		)
-
-		[content_creatable] => Array(
-			・・・
-		)
-
-		[content_editable] => Array(
-			・・・
-		)
-
-		[content_publishable] => Array(
-			・・・
-		)
-
-		[content_comment_creatable] => Array(
-			・・・
-		)
-
-		[content_comment_editable] => Array(
-			・・・
-		)
-
-		[content_comment_publishable] => Array(
-			・・・
-		)
-
-		[block_permission_editable] => Array(
-			・・・
-		)
-
-		[html_not_limited] => Array(
-			・・・
-		)
-
-	)
-
-	[Plugin] => Array(
-		[id] => 5
-		[language_id] => 2
-		[key] => announcements
-		[name] => お知らせ
-		[namespace] => netcommons/announcements
-		[weight] =>
-		[type] => 1
-		[default_action] => announcements/view
-		[default_setting_action] => announcement_blocks/index
-	)
-
-	[Frame] => Array(
-		[id] => 1
-		[language_id] => 2
-		[room_id] => 1
-		[box_id] => 3
-		[plugin_key] => announcements
-		[block_id] => 1
-		[key] => frame_1
-		[name] => お知らせ
-		[header_type] => default
-		[translation_engine] =>
-		[is_first_auto_translation] =>
-		[is_auto_translated] =>
-		[weight] => 1
-		[is_deleted] =>
-	)
-
-	[Box] => Array(
-		[id] => 3
-		[container_id] => 3
-		[type] => 4
-		[space_id] =>
-		[room_id] => 1
-		[page_id] => 1
-		[weight] => 1
-	)
-
-	[Block] => Array(
-		[id] => 1
-		[language_id] => 2
-		[room_id] => 1
-		[plugin_key] => announcements
-		[key] => block_1
-		[name] => NetCommons 3! セッティングモードで編集しよう.
-		[public_type] => 1
-		[from] =>
-		[to] =>
-		[translation_engine] =>
-		[is_auto_translated] =>
-		[is_first_auto_translation] =>
-	)
-)
-```
+CakePHPのModelクラスを継承してます。
+#### Overrideしているメソッド
+[__construct](#__construct)
+[setDataSource](#setDataSource)
+[create](#create)
 
 
-* Class name: Current
+* Class name: NetCommonsAppModel
 * Namespace: 
-
-
-
-Constants
-----------
-
-
-### SETTING_MODE_WORD
-
-    const SETTING_MODE_WORD = 'setting'
+* Parent class: Model
 
 
 
@@ -233,23 +22,11 @@ Properties
 ----------
 
 
-### $__isSettingMode
+### $__useDbConfig
 
-    private boolean $__isSettingMode = null
+    private array $__useDbConfig
 
-is setting mode true
-
-
-
-* Visibility: **private**
-* This property is **static**.
-
-
-### $__request
-
-    private mixed $__request
-
-Request object
+use useDbConfig
 
 
 
@@ -257,207 +34,211 @@ Request object
 * This property is **static**.
 
 
-### $__instance
+### $actsAs
 
-    private mixed $__instance
+    public array $actsAs = array('NetCommons.Trackable')
 
-Instance object
-
-
-
-* Visibility: **private**
-* This property is **static**.
-
-
-### $current
-
-    public array $current = array()
-
-Current data
+use behaviors
 
 
 
 * Visibility: **public**
-* This property is **static**.
 
 
-### $m17n
+### $validate
 
-    public array $m17n = array()
+    public array $validate = array()
 
-M17n data
+Validation rules
 
 
 
 * Visibility: **public**
-* This property is **static**.
 
 
 Methods
 -------
 
 
-### initialize
+### __construct
 
-    void Current::initialize(\CakeRequest $request)
+    void NetCommonsAppModel::__construct(boolean|integer|string|array $id, string $table, string $ds)
 
-setup current data
+Constructor. DataSourceの選択
 
-
+接続先DBをランダムに選択します。
 
 * Visibility: **public**
-* This method is **static**.
 
 
 #### Arguments
-* $request **CakeRequest** - &lt;p&gt;CakeRequest&lt;/p&gt;
+* $id **boolean|integer|string|array** - &lt;p&gt;Set this ID for this model on startup,
+can also be an array of options, see above.&lt;/p&gt;
+* $table **string** - &lt;p&gt;Name of database table to use.&lt;/p&gt;
+* $ds **string** - &lt;p&gt;DataSource connection name.&lt;/p&gt;
 
 
 
-### read
+### setDataSource
 
-    array|null Current::read(string|null $key)
+    void NetCommonsAppModel::setDataSource(string $dataSource)
 
-指定された$keyの値を返します。
+Sets the DataSource to which this model is bound.
 
-現在のBlockKeyを取得したい場合
-```
-Cuurent::read('Block.key')
-```
+データの書き込み時はMaterDBに対して行うため、接続先DBを変更しているが、<br>
+Test実行時は唯一のDBに対して行うようにOverrideしています。
 
 * Visibility: **public**
-* This method is **static**.
 
 
 #### Arguments
-* $key **string|null** - &lt;p&gt;Hashクラスのpath&lt;/p&gt;
+* $dataSource **string** - &lt;p&gt;The name of the DataSource, as defined in app/Config/database.php&lt;/p&gt;
 
 
 
-### readM17n
+### create
 
-    mixed Current::readM17n(string|null $languageId, string|null $model, string|null $field)
+    array NetCommonsAppModel::create(boolean|array $data, boolean $filterKey)
 
-多言語のデータ取得
+Initializes the model for writing a new record, loading the default values
+for those fields that are not defined in $data, and clearing previous validation errors.
 
+Especially helpful for saving data in loops.
 
+NetCommonsで使用する共通の値がセットされた結果を返します。<br>
+CakePHPのSchemaは、not null指定されたカラムのdefaultがnullになっているため、<br>
+''(長さ0の文字列)に書き換えています。
 
 * Visibility: **public**
-* This method is **static**.
 
 
 #### Arguments
-* $languageId **string|null** - &lt;p&gt;言語ID&lt;/p&gt;
-* $model **string|null** - &lt;p&gt;モデル名&lt;/p&gt;
-* $field **string|null** - &lt;p&gt;フィールド名&lt;/p&gt;
+* $data **boolean|array** - &lt;p&gt;Optional data array to assign to the model after it is created. If null or false,
+  schema data defaults are not merged.&lt;/p&gt;
+* $filterKey **boolean** - &lt;p&gt;If true, overwrites any primary key input with an empty value&lt;/p&gt;
 
 
 
-### permission
+### createAll
 
-    boolean Current::permission(string|array $key)
+    array NetCommonsAppModel::createAll(boolean|array $data, boolean $filterKey)
 
-指定された$key(権限名文字列)の値を返します。
+Initializes the model for writing a new record, loading the default values
+for those fields that are not defined in $data, and clearing previous validation errors.
 
-```
-Current::permission('content_publishable')
-```
+Especially helpful for saving data in loops.
 
 * Visibility: **public**
-* This method is **static**.
 
 
 #### Arguments
-* $key **string|array** - &lt;p&gt;Hashクラスのpath&lt;/p&gt;
+* $data **boolean|array** - &lt;p&gt;Optional data array to assign to the model after it is created. If null or false,
+  schema data defaults are not merged.&lt;/p&gt;
+* $filterKey **boolean** - &lt;p&gt;If true, overwrites any primary key input with an empty value&lt;/p&gt;
 
 
 
-### isLogin
+### begin
 
-    boolean Current::isLogin()
+    void NetCommonsAppModel::begin()
 
-ログインチェック
-
-
-
-* Visibility: **public**
-* This method is **static**.
-
-
-
-
-### isSettingMode
-
-    boolean Current::isSettingMode(boolean|null $settingMode)
-
-セッティングモードチェック
+transaction begin
 
 
 
 * Visibility: **public**
-* This method is **static**.
+
+
+
+
+### commit
+
+    void NetCommonsAppModel::commit()
+
+transaction commit
+
+
+
+* Visibility: **public**
+
+
+
+
+### rollback
+
+    void NetCommonsAppModel::rollback(mixed $ex)
+
+transaction rollback
+
+
+
+* Visibility: **public**
 
 
 #### Arguments
-* $settingMode **boolean|null** - &lt;p&gt;セッティングモードの状態変更&lt;/p&gt;
+* $ex **mixed** - &lt;p&gt;Exception&lt;/p&gt;
 
 
 
-### hasSettingMode
+### loadModels
 
-    boolean Current::hasSettingMode()
+    void NetCommonsAppModel::loadModels(array $models, string $source)
 
-セッティングモードの有無
-
-
-
-* Visibility: **public**
-* This method is **static**.
-
-
-
-
-### isControlPanel
-
-    boolean Current::isControlPanel()
-
-コントロールパネルチェック
+Load models
 
 
 
 * Visibility: **public**
-* This method is **static**.
-
-
-
-
-### hasControlPanel
-
-    boolean Current::hasControlPanel()
-
-コントロールパネルの有無
-
-
-
-* Visibility: **public**
-* This method is **static**.
-
-
-
-
-### allowSystemPlugin
-
-    boolean Current::allowSystemPlugin(string $pluginKey)
-
-管理系プラグインの許可
-
-
-
-* Visibility: **public**
-* This method is **static**.
 
 
 #### Arguments
-* $pluginKey **string** - &lt;p&gt;プラグインkey&lt;/p&gt;
+* $models **array** - &lt;p&gt;models to load&lt;/p&gt;
+* $source **string** - &lt;p&gt;data source&lt;/p&gt;
+
+
+
+### equalToField
+
+    boolean NetCommonsAppModel::equalToField(array $field1, string $field2)
+
+Check field1 matches field2
+
+
+
+* Visibility: **public**
+
+
+#### Arguments
+* $field1 **array** - &lt;p&gt;field1 parameters&lt;/p&gt;
+* $field2 **string** - &lt;p&gt;field2 key&lt;/p&gt;
+
+
+
+### _getDefaultValue
+
+    array NetCommonsAppModel::_getDefaultValue(array $data)
+
+全カラムのデフォルト値をセットした配列を返す。
+
+
+
+* Visibility: **protected**
+
+
+#### Arguments
+* $data **array** - &lt;p&gt;デフォルトを上書きするカラム配列&lt;/p&gt;
+
+
+
+### _getCurrentValue
+
+    array NetCommonsAppModel::_getCurrentValue()
+
+Currentで取れる値を返す。
+
+
+
+* Visibility: **protected**
+
 
 
