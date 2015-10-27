@@ -1,33 +1,218 @@
-Blocks
-==============
-NetCommonsのブロックとは、フレームに割り当てるデータ概念です。<br>
-フレームに配置されるプラグインは、１つ以上のブロックを持ち１ブロックにたいして、複数のコンテンツが関連付けられます。<br>
+BlockBehavior
+===============
 
-フレームの右上部Glyphicon(歯車)をクリックすると表示されるブロック設定画面の共通処理をまとめています。
+Block Behavior
 
-[![Build Status](https://api.travis-ci.org/NetCommons3/Blocks.png?branch=master)](https://travis-ci.org/NetCommons3/Blocks)
-[![Coverage Status](https://coveralls.io/repos/NetCommons3/Blocks/badge.png?branch=master)](https://coveralls.io/r/NetCommons3/Blocks?branch=master)
+ブロックモデルにアソシエーションがあるモデルのビヘイビアです。<br>
+ブロックデータの内、ブロック編集にかかわる項目（名称、公開期限）を処理します。<br>
 
-| dependencies  | status |
-| ------------- | ------ |
-| composer.json | [![Dependency Status](https://www.versioneye.com/user/projects/543b99c1b2a9c5db88000385/badge.png)](https://www.versioneye.com/user/projects/543b99c1b2a9c5db88000385) |
+#### 設定項目
+##### name
+ブロック名称フィールドを指定すると、ブロックモデルの名称として登録されます。<br>
+お知らせなど名称がない場合でも名称となり得るフィールドを指定してください。255文字の長さで登録されます。<br>
+
+##### loadModels
+他にアソシエーションがあるモデルがある場合は、loadModelsに指定してください。<br>
+ブロックデータ登録後、指定されたモデルのblock_id、block_keyに値がセットされます。<br>
+ブロック削除時には指定されたモデルから削除されます。<br>
+
+#### サンプルコード
+```
+public $actsAs = array(
+	'Blocks.Block' => array(
+		'name' => 'Faq.name',
+		'loadModels' => array(
+			'Category' => 'Categories.Category',
+			'CategoryOrder' => 'Categories.CategoryOrder',
+			'WorkflowComment' => 'Workflow.WorkflowComment',
+		)
+	)
+)
+```
+
+登録時は自動的に登録しますが、削除は明示的に呼び出してください。
+#### サンプルコード（Faqモデル）
+```
+public function deleteFaq($data) {
+	$this->begin();
+	try {
+		if (!$this->delete($data[Faq][id])) {
+			throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
+		}
+
+		$this->deleteBlock($data['Block']['key']);
+
+		$this->commit();
+	} catch (Exception $ex) {
+ 	$this->rollback($ex);
+	}
+}
+
+```
 
 
-### BlockTabsComponent
-なくなる予定<br>
-BlockFormHelperに統合
+* Class name: BlockBehavior
+* Namespace: 
+* Parent class: ModelBehavior
 
-### [BlockBehavior](https://github.com/NetCommons3/NetCommons3Docs/blob/master/phpdocMd/Blocks/BlockBehavior.md#blockbehavior)
 
-### [BlockRolePermissionBehavior](https://github.com/NetCommons3/NetCommons3Docs/blob/master/phpdocMd/Blocks/BlockRolePermissionBehavior.md#blockrolepermissionbehavior)
 
-### BlockTabsHelper
-ブロック設定画面の、ブロック設定タブ、および、権限設定タブを作成します。
+Constants
+----------
 
-### BlockRolePermissionFormHelper
-ブロック設定画面の権限チェックボックスを描画します。
-BlockFormHelperと一緒で良い気がする。
 
-### BlockFormHelper
-ブロック一覧のフレーム配置ラジオボタンを描画します。
+### NAME_LENGTH
+
+    const NAME_LENGTH = 255
+
+
+
+
+
+
+
+Methods
+-------
+
+
+### setup
+
+    void BlockBehavior::setup(\Model $model, array $config)
+
+Setup this behavior with the specified configuration settings.
+
+
+
+* Visibility: **public**
+
+
+#### Arguments
+* $model **Model** - &lt;p&gt;Model using this behavior&lt;/p&gt;
+* $config **array** - &lt;p&gt;Configuration settings for $model&lt;/p&gt;
+
+
+
+### beforeValidate
+
+    mixed BlockBehavior::beforeValidate(\Model $model, array $options)
+
+beforeValidate is called before a model is validated, you can use this callback to
+add behavior validation rules into a models validate array. Returning false
+will allow you to make the validation fail.
+
+
+
+* Visibility: **public**
+
+
+#### Arguments
+* $model **Model** - &lt;p&gt;Model using this behavior&lt;/p&gt;
+* $options **array** - &lt;p&gt;Options passed from Model::save().&lt;/p&gt;
+
+
+
+### beforeSave
+
+    mixed BlockBehavior::beforeSave(\Model $model, array $options)
+
+beforeSave is called before a model is saved. Returning false from a beforeSave callback
+will abort the save operation.
+
+
+
+* Visibility: **public**
+
+
+#### Arguments
+* $model **Model** - &lt;p&gt;Model using this behavior&lt;/p&gt;
+* $options **array** - &lt;p&gt;Options passed from Model::save().&lt;/p&gt;
+
+
+
+### __setRecursiveBlockField
+
+    void BlockBehavior::__setRecursiveBlockField(\Model $model, $data, string $field, string $key, string $value)
+
+Set block field
+
+
+
+* Visibility: **private**
+
+
+#### Arguments
+* $model **Model** - &lt;p&gt;Model using this behavior&lt;/p&gt;
+* $data **mixed**
+* $field **string** - &lt;p&gt;Update field&lt;/p&gt;
+* $key **string** - &lt;p&gt;Recursive key&lt;/p&gt;
+* $value **string** - &lt;p&gt;Update value&lt;/p&gt;
+
+
+
+### __saveBlock
+
+    void BlockBehavior::__saveBlock(\Model $model, array $frame)
+
+savePrepare
+
+
+
+* Visibility: **private**
+
+
+#### Arguments
+* $model **Model** - &lt;p&gt;Model using this behavior&lt;/p&gt;
+* $frame **array** - &lt;p&gt;Frame data&lt;/p&gt;
+
+
+
+### getBlockConditions
+
+    array BlockBehavior::getBlockConditions(\Model $model, array $conditions)
+
+Get conditions
+
+
+
+* Visibility: **public**
+
+
+#### Arguments
+* $model **Model** - &lt;p&gt;Model using this behavior&lt;/p&gt;
+* $conditions **array** - &lt;p&gt;Model::find conditions default value&lt;/p&gt;
+
+
+
+### getBlockConditionById
+
+    array BlockBehavior::getBlockConditionById(\Model $model, array $conditions)
+
+Get condition by Block.id
+
+
+
+* Visibility: **public**
+
+
+#### Arguments
+* $model **Model** - &lt;p&gt;Model using this behavior&lt;/p&gt;
+* $conditions **array** - &lt;p&gt;Model::find conditions default value&lt;/p&gt;
+
+
+
+### deleteBlock
+
+    void BlockBehavior::deleteBlock(\Model $model, string $blockKey)
+
+Delete block.
+
+
+
+* Visibility: **public**
+
+
+#### Arguments
+* $model **Model** - &lt;p&gt;Model using this behavior&lt;/p&gt;
+* $blockKey **string** - &lt;p&gt;blocks.key&lt;/p&gt;
+
 
