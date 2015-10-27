@@ -1,47 +1,18 @@
-BlockBehavior
+VisualCaptchaComponent
 ===============
 
-Block Behavior
+VisualCaptcha Component
 
-ブロックモデルにアソシエーションがあるモデルのビヘイビアです。<br>
-ブロックデータの内、ブロック編集にかかわる項目（名称、公開期限）を処理します。<br>
+画像認証画面へのリダイレクト、認証処理を行います。
+利用方式、対象アクション、認証要素key名称を指定してください。
 
-#### 設定項目
-##### name
-ブロック名称フィールドを指定すると、ブロックモデルの名称として登録されます。<br>
-お知らせなど名称がない場合でも名称となり得るフィールドを指定してください。
-[NAME_LENGTH](#name_length)の長さで登録されます。<br>
-
-##### loadModels
-他にアソシエーションがあるモデルがある場合は、loadModelsに指定してください。<br>
-ブロックデータ登録後、指定されたモデルのblock_id、block_keyに値がセットされます。<br>
-ブロック削除時には指定されたモデルから削除されます。<br>
-
-#### サンプルコード
-```
-public $actsAs = array(
-	'Blocks.Block' => array(
-		'name' => 'Faq.name',
-		'loadModels' => array(
-			'Category' => 'Categories.Category',
-			'CategoryOrder' => 'Categories.CategoryOrder',
-			'WorkflowComment' => 'Workflow.WorkflowComment',
-		)
-	)
-)
-```
-
-ブロックデータを取得する場合の条件<br>
-[getBlockConditions](https://github.com/kteraguchi/test/blob/master/README.md#getblockconditions)<br>
-[getBlockConditionById](https://github.com/kteraguchi/test/blob/master/README.md#getblockconditionbyid)<br>
-
-登録時は自動的に登録しますが、削除は明示的に呼び出してください。<br>
-[deleteBlock](https://github.com/kteraguchi/test/blob/master/README.md#deleteblock)<br>
+[利用方式](#type)<br>
+[許可アクションリスト](#allow)
 
 
-* Class name: BlockBehavior
+* Class name: VisualCaptchaComponent
 * Namespace: 
-* Parent class: ModelBehavior
+* Parent class: Component
 
 
 
@@ -49,44 +20,195 @@ Constants
 ----------
 
 
-### NAME_LENGTH
+### OPERATION_REDIRECT
 
-    const NAME_LENGTH = 255
-
-
+    const OPERATION_REDIRECT = 'redirect'
 
 
 
+
+
+### OPERATION_EMBEDDING
+
+    const OPERATION_EMBEDDING = 'embedding'
+
+
+
+
+
+### OPERATION_NONE
+
+    const OPERATION_NONE = 'none'
+
+
+
+
+
+Properties
+----------
+
+
+### $operationType
+
+    public string $operationType = \VisualCaptchaComponent::OPERATION_EMBEDDING
+
+利用方式
+
+* OPERATION_REDIRECT<br>
+切り替わり方式<br>
+認証が必要な画面を表示する前に、画像認証画面が自動的に表示される方式です。<br>
+画像認証に成功した後、認証が必要な画面を表示します。<br>
+この場合、画像認証画面、認証Postを当プラグインが処理するため、、
+利用プラグインは、VisualCaptchaComponentを設定するのみです。<br>
+対象アクション名も指定してください。
+
+#### サンプルコード
+```
+public $components = array(
+	'VisualCaptcha.VisualCaptcha' => array(
+		'operationType' => VisualCaptchaComponent::OPERATION_REDIRECT,
+		'targetAction' => 'answer',
+		'identifyKey' => 'Questionnaire'？？？
+	)
+)
+```
+
+* OPERATION_EMBEDDING<br>
+埋め込み方式(デフォルト)<br>
+認証が必要な画面に、画像認証パーツを埋め込む方式です。<br>
+切り替わり方式だと画像認証画面だけが表示されることになるが、埋め込み方式は認証が必要な画面の任意の場所に埋め込めます。<br>
+この場合は、VisualCaptchaComponentを設定、viewファイルへのvisual_captcha.ctpの埋め込み、
+正しい回答がされたかのチェックを行う必要があります。<br>
+
+
+#### サンプルコード
+##### Controller(明示的に指定)
+```
+public $components = array(
+	'VisualCaptcha.VisualCaptcha' => array(
+		'operationType' => VisualCaptchaComponent::OPERATION_EMBEDDING,
+	)
+)
+```
+##### Controller(デフォルト設定を利用)
+```
+public $components = array(
+	'VisualCaptcha.VisualCaptcha'
+)
+```
+##### View
+```
+<?php
+	echo $this->element(
+		'VisualCaptcha.visual_captcha', array(
+			'identifyKey' => 'VisualCaptcha'
+		)
+); ?>
+```
+
+* Visibility: **public**
+
+
+### $controller
+
+    public object $controller = null
+
+call controller w/ associations
+
+
+
+* Visibility: **public**
+
+
+### $targetController
+
+    public string $targetController = null
+
+visual captcha redirect target controller
+
+
+
+* Visibility: **public**
+
+
+### $targetAction
+
+    public string $targetAction = null
+
+visual captcha redirect target controller action
+
+
+
+* Visibility: **public**
+
+
+### $assetPath
+
+    public string $assetPath = null
+
+assetPath /r associations
+
+
+
+* Visibility: **public**
+
+
+### $imageField
+
+    public string $imageField = null
+
+imageField Answer /r associations
+
+
+
+* Visibility: **public**
+
+
+### $audioField
+
+    public string $audioField = null
+
+audioField Answer /r associations
+
+
+
+* Visibility: **public**
+
+
+### $visualCaptchaAction
+
+    public array $visualCaptchaAction = array('plugin' => 'visual_captcha', 'controller' => 'visual_captcha', 'action' => 'view')
+
+切り替えタイプのときの切り替え先画面のURLデフォルト値
+デフォルトの画像認証画面では困る場合はこの構造データを変更してください
+
+
+
+* Visibility: **public**
+
+
+### $returnUrl
+
+    public array $returnUrl = array()
+
+認証後戻るURL
+切り替え型の時しか使わない
+切り替え型で、画像認証成功時戻る先のURL
+
+
+
+* Visibility: **public**
 
 
 Methods
 -------
 
 
-### setup
+### initialize
 
-    void BlockBehavior::setup(\Model $model, array $config)
+    void VisualCaptchaComponent::initialize(\Controller $controller)
 
-Setup this behavior with the specified configuration settings.
-
-
-
-* Visibility: **public**
-
-
-#### Arguments
-* $model **Model** - &lt;p&gt;Model using this behavior&lt;/p&gt;
-* $config **array** - &lt;p&gt;Configuration settings for $model&lt;/p&gt;
-
-
-
-### beforeValidate
-
-    mixed BlockBehavior::beforeValidate(\Model $model, array $options)
-
-beforeValidate is called before a model is validated, you can use this callback to
-add behavior validation rules into a models validate array. Returning false
-will allow you to make the validation fail.
+Called before the Controller::beforeFilter().
 
 
 
@@ -94,17 +216,15 @@ will allow you to make the validation fail.
 
 
 #### Arguments
-* $model **Model** - &lt;p&gt;Model using this behavior&lt;/p&gt;
-* $options **array** - &lt;p&gt;Options passed from Model::save().&lt;/p&gt;
+* $controller **Controller** - &lt;p&gt;Controller with components to initialize&lt;/p&gt;
 
 
 
-### beforeSave
+### startup
 
-    mixed BlockBehavior::beforeSave(\Model $model, array $options)
+    void VisualCaptchaComponent::startup(\Controller $controller)
 
-beforeSave is called before a model is saved. Returning false from a beforeSave callback
-will abort the save operation.
+Called after the Controller::beforeFilter() and before the controller action
 
 
 
@@ -112,16 +232,86 @@ will abort the save operation.
 
 
 #### Arguments
-* $model **Model** - &lt;p&gt;Model using this behavior&lt;/p&gt;
-* $options **array** - &lt;p&gt;Options passed from Model::save().&lt;/p&gt;
+* $controller **Controller** - &lt;p&gt;Controller with components to startup&lt;/p&gt;
 
 
 
-### __setRecursiveBlockField
+### getReturnUrl
 
-    void BlockBehavior::__setRecursiveBlockField(\Model $model, $data, string $field, string $key, string $value)
+    string VisualCaptchaComponent::getReturnUrl()
 
-Set block field
+getReturnUrl get return screen url
+
+
+
+* Visibility: **public**
+
+
+
+
+### check
+
+    boolean VisualCaptchaComponent::check()
+
+check input response
+
+
+
+* Visibility: **public**
+
+
+
+
+### generate
+
+    string VisualCaptchaComponent::generate(integer $count)
+
+generate visual captcha data and return it
+
+
+
+* Visibility: **public**
+
+
+#### Arguments
+* $count **integer** - &lt;p&gt;display image count&lt;/p&gt;
+
+
+
+### image
+
+    string VisualCaptchaComponent::image(integer $index)
+
+generate visual captcha image data and return it
+
+
+
+* Visibility: **public**
+
+
+#### Arguments
+* $index **integer** - &lt;p&gt;display image index&lt;/p&gt;
+
+
+
+### audio
+
+    \streaming VisualCaptchaComponent::audio()
+
+generate audio captcha data and return it
+
+
+
+* Visibility: **public**
+
+
+
+
+### __utilReadJSON
+
+    object VisualCaptchaComponent::__utilReadJSON(string $filePath)
+
+Read input file as JSON
 
 
 
@@ -129,108 +319,6 @@ Set block field
 
 
 #### Arguments
-* $model **Model** - &lt;p&gt;Model using this behavior&lt;/p&gt;
-* $data **mixed**
-* $field **string** - &lt;p&gt;Update field&lt;/p&gt;
-* $key **string** - &lt;p&gt;Recursive key&lt;/p&gt;
-* $value **string** - &lt;p&gt;Update value&lt;/p&gt;
-
-
-
-### __saveBlock
-
-    void BlockBehavior::__saveBlock(\Model $model, array $frame)
-
-savePrepare
-
-
-
-* Visibility: **private**
-
-
-#### Arguments
-* $model **Model** - &lt;p&gt;Model using this behavior&lt;/p&gt;
-* $frame **array** - &lt;p&gt;Frame data&lt;/p&gt;
-
-
-
-### getBlockConditions
-
-    array BlockBehavior::getBlockConditions(\Model $model, array $conditions)
-
-ブロック一覧データを取得する場合の条件を返します。
-
-#### サンプルコード（Faqモデル）
-```
-$this->Paginator->settings = array(
-	'Faq' => array(
-		'order' => array('Block.id' => 'desc'),
-		'conditions' => $this->Faq->getBlockConditions(),
-		)
-	);
-```
-
-* Visibility: **public**
-
-
-#### Arguments
-* $model **Model** - &lt;p&gt;Model using this behavior&lt;/p&gt;
-* $conditions **array** - &lt;p&gt;Model::find conditions default value&lt;/p&gt;
-
-
-
-### getBlockConditionById
-
-    array BlockBehavior::getBlockConditionById(\Model $model, array $conditions)
-
-ブロックデータを取得する場合の条件を返します。
-
-#### サンプルコード（Faqモデル）
-```
-$faq = $this->find('all', array(
-	'recursive' => -1,
-	'conditions' => $this->getBlockConditionById(),
-));
-```
-
-* Visibility: **public**
-
-
-#### Arguments
-* $model **Model** - &lt;p&gt;Model using this behavior&lt;/p&gt;
-* $conditions **array** - &lt;p&gt;Model::find conditions default value&lt;/p&gt;
-
-
-
-### deleteBlock
-
-    void BlockBehavior::deleteBlock(\Model $model, string $blockKey)
-
-ブロックデータを削除します。.
-
-#### サンプルコード（Faqモデル）
-```
-public function deleteFaq($data) {
-	$this->begin();
-	try {
-		if (!$this->delete($data[Faq][id])) {
-			throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
-		}
-
-		$this->deleteBlock($data['Block']['key']);
-
-		$this->commit();
-	} catch (Exception $ex) {
- 	$this->rollback($ex);
-	}
-}
-```
-
-* Visibility: **public**
-
-
-#### Arguments
-* $model **Model** - &lt;p&gt;Model using this behavior&lt;/p&gt;
-* $blockKey **string** - &lt;p&gt;blocks.key&lt;/p&gt;
+* $filePath **string** - &lt;p&gt;json file path&lt;/p&gt;
 
 
