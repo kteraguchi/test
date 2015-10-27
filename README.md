@@ -1,64 +1,57 @@
-BlockRolePermissionBehavior
+BlockBehavior
 ===============
 
-BlockRolePermission Behavior
+Block Behavior
 
 ブロックモデルにアソシエーションがあるモデルのビヘイビアです。<br>
-ブロックデータの内、ブロック権限にかかわる項目（コンテンツ作成有無など）を処理します。<br>
-BlockRolePermissionFormHelperで作成される権限配列を登録します。
+ブロックデータの内、ブロック編集にかかわる項目（名称、公開期限）を処理します。<br>
 
-#### 配列サンプル
+#### 設定項目
+##### name
+ブロック名称フィールドを指定すると、ブロックモデルの名称として登録されます。<br>
+お知らせなど名称がない場合でも名称となり得るフィールドを指定してください。
+[NAME_LENGTH](#name_length)の長さで登録されます。<br>
+
+##### loadModels
+他にアソシエーションがあるモデルがある場合は、loadModelsに指定してください。<br>
+ブロックデータ登録後、指定されたモデルのblock_id、block_keyに値がセットされます。<br>
+ブロック削除時には指定されたモデルから削除されます。<br>
+
+#### サンプルコード
 ```
-$model->data = array(
-	'BlockRolePermission' => array(
-		'content_creatable' => array(
-			general_user' => array(
-				'id' => '999',
-				'roles_room_id' => '99',
-				'block_key' => 'abcdefg',
-				'permission' => 'content_creatable'
-				'value' => '0'
-			),
-		'content_comment_creatable' => array(
-			'editor' => array(
-				'id' => '998',
-				'roles_room_id' =>'98'
-				'block_key' =>  'abcdefg',
-				'permission' => 'content_comment_creatable'
-				'value' => '1'
-			),
-			'general_user' => array(
-				'id' => '997',
-				'roles_room_id' =>'97'
-				'block_key' =>  'abcdefg',
-				'permission' => 'content_comment_creatable'
-				'value' => '0'
-			),
-			'visitor' => array(
-				'id' => '996',
-				'roles_room_id' =>'96'
-				'block_key' =>  'abcdefg',
-				'permission' => 'content_comment_creatable'
-				'value' => '0'
-			),
-		),
-		'content_comment_publishable' => array(
-			'editor' => array(
-				'id' => '995',
-				'roles_room_id' =>'98'
-				'block_key' =>  'abcdefg',
-				'permission' => 'content_comment_publishable'
-				'value' => '0'
-			),
-		),
-	),
+public $actsAs = array(
+	'Blocks.Block' => array(
+		'name' => 'Faq.name',
+		'loadModels' => array(
+			'Category' => 'Categories.Category',
+			'CategoryOrder' => 'Categories.CategoryOrder',
+			'WorkflowComment' => 'Workflow.WorkflowComment',
+		)
+	)
 )
 ```
 
+ブロックデータを取得する場合の条件
+[getBlockConditions](https://github.com/kteraguchi/test/blob/master/README.md#getblockconditions)
+[getBlockConditionById](https://github.com/kteraguchi/test/blob/master/README.md#getblockconditionbyid)
 
-* Class name: BlockRolePermissionBehavior
+登録時は自動的に登録しますが、削除は明示的に呼び出してください。
+[deleteBlock](https://github.com/kteraguchi/test/blob/master/README.md#deleteblock)
+
+
+* Class name: BlockBehavior
 * Namespace: 
 * Parent class: ModelBehavior
+
+
+
+Constants
+----------
+
+
+### NAME_LENGTH
+
+    const NAME_LENGTH = 255
 
 
 
@@ -70,9 +63,26 @@ Methods
 -------
 
 
+### setup
+
+    void BlockBehavior::setup(\Model $model, array $config)
+
+Setup this behavior with the specified configuration settings.
+
+
+
+* Visibility: **public**
+
+
+#### Arguments
+* $model **Model** - &lt;p&gt;Model using this behavior&lt;/p&gt;
+* $config **array** - &lt;p&gt;Configuration settings for $model&lt;/p&gt;
+
+
+
 ### beforeValidate
 
-    mixed BlockRolePermissionBehavior::beforeValidate(\Model $model, array $options)
+    mixed BlockBehavior::beforeValidate(\Model $model, array $options)
 
 beforeValidate is called before a model is validated, you can use this callback to
 add behavior validation rules into a models validate array. Returning false
@@ -89,11 +99,12 @@ will allow you to make the validation fail.
 
 
 
-### afterSave
+### beforeSave
 
-    boolean BlockRolePermissionBehavior::afterSave(\Model $model, boolean $created, array $options)
+    mixed BlockBehavior::beforeSave(\Model $model, array $options)
 
-afterSave is called after a model is saved.
+beforeSave is called before a model is saved. Returning false from a beforeSave callback
+will abort the save operation.
 
 
 
@@ -102,7 +113,124 @@ afterSave is called after a model is saved.
 
 #### Arguments
 * $model **Model** - &lt;p&gt;Model using this behavior&lt;/p&gt;
-* $created **boolean** - &lt;p&gt;True if this save created a new record&lt;/p&gt;
 * $options **array** - &lt;p&gt;Options passed from Model::save().&lt;/p&gt;
+
+
+
+### __setRecursiveBlockField
+
+    void BlockBehavior::__setRecursiveBlockField(\Model $model, $data, string $field, string $key, string $value)
+
+Set block field
+
+
+
+* Visibility: **private**
+
+
+#### Arguments
+* $model **Model** - &lt;p&gt;Model using this behavior&lt;/p&gt;
+* $data **mixed**
+* $field **string** - &lt;p&gt;Update field&lt;/p&gt;
+* $key **string** - &lt;p&gt;Recursive key&lt;/p&gt;
+* $value **string** - &lt;p&gt;Update value&lt;/p&gt;
+
+
+
+### __saveBlock
+
+    void BlockBehavior::__saveBlock(\Model $model, array $frame)
+
+savePrepare
+
+
+
+* Visibility: **private**
+
+
+#### Arguments
+* $model **Model** - &lt;p&gt;Model using this behavior&lt;/p&gt;
+* $frame **array** - &lt;p&gt;Frame data&lt;/p&gt;
+
+
+
+### getBlockConditions
+
+    array BlockBehavior::getBlockConditions(\Model $model, array $conditions)
+
+ブロック一覧データを取得する場合の条件を返します。
+
+#### サンプルコード（Faqモデル）
+```
+$this->Paginator->settings = array(
+	'Faq' => array(
+		'order' => array('Block.id' => 'desc'),
+		'conditions' => $this->Faq->getBlockConditions(),
+		)
+	);
+```
+
+* Visibility: **public**
+
+
+#### Arguments
+* $model **Model** - &lt;p&gt;Model using this behavior&lt;/p&gt;
+* $conditions **array** - &lt;p&gt;Model::find conditions default value&lt;/p&gt;
+
+
+
+### getBlockConditionById
+
+    array BlockBehavior::getBlockConditionById(\Model $model, array $conditions)
+
+ブロックデータを取得する場合の条件を返します。
+
+#### サンプルコード（Faqモデル）
+```
+$faq = $this->find('all', array(
+	'recursive' => -1,
+	'conditions' => $this->getBlockConditionById(),
+));
+```
+
+* Visibility: **public**
+
+
+#### Arguments
+* $model **Model** - &lt;p&gt;Model using this behavior&lt;/p&gt;
+* $conditions **array** - &lt;p&gt;Model::find conditions default value&lt;/p&gt;
+
+
+
+### deleteBlock
+
+    void BlockBehavior::deleteBlock(\Model $model, string $blockKey)
+
+ブロックデータを削除します。.
+
+#### サンプルコード（Faqモデル）
+```
+public function deleteFaq($data) {
+	$this->begin();
+	try {
+		if (!$this->delete($data[Faq][id])) {
+			throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
+		}
+
+		$this->deleteBlock($data['Block']['key']);
+
+		$this->commit();
+	} catch (Exception $ex) {
+ 	$this->rollback($ex);
+	}
+}
+```
+
+* Visibility: **public**
+
+
+#### Arguments
+* $model **Model** - &lt;p&gt;Model using this behavior&lt;/p&gt;
+* $blockKey **string** - &lt;p&gt;blocks.key&lt;/p&gt;
 
 
