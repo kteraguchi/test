@@ -35,8 +35,8 @@ public $actsAs = array(
 [getBlockConditions](https://github.com/kteraguchi/test/blob/master/README.md#getblockconditions)<br>
 [getBlockConditionById](https://github.com/kteraguchi/test/blob/master/README.md#getblockconditionbyid)<br>
 
-登録時は自動的に登録しますが、削除は明示的に呼び出してください。
-[deleteBlock](https://github.com/kteraguchi/test/blob/master/README.md#deleteblock)
+登録時は自動的に登録しますが、削除は明示的に呼び出してください。<br>
+[deleteBlock](https://github.com/kteraguchi/test/blob/master/README.md#deleteblock)<br>
 
 
 * Class name: BlockBehavior
