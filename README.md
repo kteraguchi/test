@@ -1,25 +1,14 @@
-NetCommonsTimeComponent
+WorkflowSaveTest
 ===============
 
-Class NetCommonsTimeComponent
-
-NetCommonsFormHelper::input()で、typeをdatetimeに指定された項目の値を
-サーバータイムゾーン（UTC）に変換します。
-
-#### サンプルコード
-```
-<?php
-	echo $this->NetCommonsForm->input(
-		'publish_start',
-		array('type' => 'datetime')
-	);
-?>
-```
+WorkflowSaveTest
 
 
-* Class name: NetCommonsTimeComponent
+
+
+* Class name: WorkflowSaveTest
 * Namespace: 
-* Parent class: Component
+* Parent class: [NetCommonsSaveTest](NetCommonsSaveTest.md)
 
 
 
@@ -29,11 +18,55 @@ Properties
 ----------
 
 
-### $_netCommonsTime
+### $_modelName
 
-    protected \NetCommonsTime $_netCommonsTime
+    protected array $_modelName = ''
+
+Model name
 
 
+
+* Visibility: **protected**
+
+
+### $_methodName
+
+    protected array $_methodName = ''
+
+Method name
+
+
+
+* Visibility: **protected**
+
+
+### $plugin
+
+    public string $plugin
+
+Plugin name
+
+
+
+* Visibility: **public**
+
+
+### $_isFixtureMerged
+
+    protected array $_isFixtureMerged = true
+
+Fixture merge
+
+
+
+* Visibility: **protected**
+
+
+### $_defaultFixtures
+
+    protected array $_defaultFixtures = array('plugin.blocks.block', 'plugin.blocks.block_role_permission', 'plugin.boxes.box', 'plugin.boxes.boxes_page', 'plugin.containers.container', 'plugin.containers.containers_page', 'plugin.frames.frame', 'plugin.m17n.language', 'plugin.pages.page', 'plugin.plugin_manager.plugin', 'plugin.roles.role', 'plugin.rooms.roles_room', 'plugin.rooms.room', 'plugin.users.user')
+
+Fixtures
 
 
 
@@ -44,52 +77,180 @@ Methods
 -------
 
 
-### initialize
+### setUp
 
-    void NetCommonsTimeComponent::initialize(\Controller $controller)
+    void NetCommonsCakeTestCase::setUp()
 
-コントローラの beforeFilter メソッドの前に呼び出されます。
+setUp method
 
 
+
+* Visibility: **public**
+* This method is defined by [NetCommonsCakeTestCase](NetCommonsCakeTestCase.md)
+
+
+
+
+### testSave
+
+    void NetCommonsSaveTest::testSave(array $data)
+
+Saveのテスト
+
+
+
+* Visibility: **public**
+* This method is defined by [NetCommonsSaveTest](NetCommonsSaveTest.md)
+
+
+#### Arguments
+* $data **array** - &lt;p&gt;登録データ&lt;/p&gt;
+
+
+
+### testCallWorkflowBehavior
+
+    void WorkflowSaveTest::testCallWorkflowBehavior(array $data)
+
+Test to call WorkflowBehavior::beforeSave
+
+WorkflowBehaviorをモックに置き換えて登録処理を呼び出します。<br>
+WorkflowBehavior::beforeSaveが1回呼び出されることをテストします。
 
 * Visibility: **public**
 
 
 #### Arguments
-* $controller **Controller** - &lt;p&gt;コントローラ&lt;/p&gt;
+* $data **array** - &lt;p&gt;登録データ&lt;/p&gt;
 
 
 
-### __call
+### testSaveOnExceptionError
 
-    mixed NetCommonsTimeComponent::__call(string $method, array $params)
+    void NetCommonsSaveTest::testSaveOnExceptionError(array $data, string $mockModel, string $mockMethod)
 
-ラップ用マジックメソッド。
+SaveのExceptionErrorテスト
 
 
 
 * Visibility: **public**
+* This method is defined by [NetCommonsSaveTest](NetCommonsSaveTest.md)
 
 
 #### Arguments
-* $method **string** - &lt;p&gt;メソッド&lt;/p&gt;
-* $params **array** - &lt;p&gt;パラメータ&lt;/p&gt;
+* $data **array** - &lt;p&gt;登録データ&lt;/p&gt;
+* $mockModel **string** - &lt;p&gt;Mockのモデル&lt;/p&gt;
+* $mockMethod **string** - &lt;p&gt;Mockのメソッド&lt;/p&gt;
 
 
 
-### _convertTimezone
+### testSaveOnValidationError
 
-    void NetCommonsTimeComponent::_convertTimezone(\Controller $controller)
+    void NetCommonsSaveTest::testSaveOnValidationError(array $data, string $mockModel, string $mockMethod)
 
-ユーザタイムゾーンからサーバータイムゾーンへの自動変換
-NetCommonsFormと連携している
+SaveのValidationErrorテスト
+
+
+
+* Visibility: **public**
+* This method is defined by [NetCommonsSaveTest](NetCommonsSaveTest.md)
+
+
+#### Arguments
+* $data **array** - &lt;p&gt;登録データ&lt;/p&gt;
+* $mockModel **string** - &lt;p&gt;Mockのモデル&lt;/p&gt;
+* $mockMethod **string** - &lt;p&gt;Mockのメソッド&lt;/p&gt;
+
+
+
+### testValidationError
+
+    void NetCommonsSaveTest::testValidationError(array $data, string $field, string $value, string $message, array $overwrite)
+
+Validatesのテスト
+
+
+
+* Visibility: **public**
+* This method is defined by [NetCommonsSaveTest](NetCommonsSaveTest.md)
+
+
+#### Arguments
+* $data **array** - &lt;p&gt;登録データ&lt;/p&gt;
+* $field **string** - &lt;p&gt;フィールド名&lt;/p&gt;
+* $value **string** - &lt;p&gt;セットする値&lt;/p&gt;
+* $message **string** - &lt;p&gt;エラーメッセージ&lt;/p&gt;
+* $overwrite **array** - &lt;p&gt;上書きするデータ&lt;/p&gt;
+
+
+
+### tearDown
+
+    void NetCommonsCakeTestCase::tearDown()
+
+tearDown method
+
+
+
+* Visibility: **public**
+* This method is defined by [NetCommonsCakeTestCase](NetCommonsCakeTestCase.md)
+
+
+
+
+### _mockForReturnFalse
+
+    void NetCommonsModelTestCase::_mockForReturnFalse(string $model, string $mockModel, string $mockMethod)
+
+ExceptionErrorのMockセット
 
 
 
 * Visibility: **protected**
+* This method is defined by [NetCommonsModelTestCase](NetCommonsModelTestCase.md)
 
 
 #### Arguments
-* $controller **Controller** - &lt;p&gt;コントローラ&lt;/p&gt;
+* $model **string** - &lt;p&gt;モデル名&lt;/p&gt;
+* $mockModel **string** - &lt;p&gt;Mockのモデル&lt;/p&gt;
+* $mockMethod **string** - &lt;p&gt;Mockのメソッド&lt;/p&gt;
+
+
+
+### __construct
+
+    void NetCommonsCakeTestCase::__construct(string $name, array $data, string $dataName)
+
+Fixtures load
+
+
+
+* Visibility: **public**
+* This method is defined by [NetCommonsCakeTestCase](NetCommonsCakeTestCase.md)
+
+
+#### Arguments
+* $name **string** - &lt;p&gt;The name parameter on PHPUnit_Framework_TestCase::__construct()&lt;/p&gt;
+* $data **array** - &lt;p&gt;The data parameter on PHPUnit_Framework_TestCase::__construct()&lt;/p&gt;
+* $dataName **string** - &lt;p&gt;The dataName parameter on PHPUnit_Framework_TestCase::__construct()&lt;/p&gt;
+
+
+
+### _testReflectionMethod
+
+    void NetCommonsCakeTestCase::_testReflectionMethod(\Instance $instance, string $mockMethod, array $params)
+
+privateおよびprotectedメソッドのテスト
+
+
+
+* Visibility: **protected**
+* This method is defined by [NetCommonsCakeTestCase](NetCommonsCakeTestCase.md)
+
+
+#### Arguments
+* $instance **Instance** - &lt;p&gt;インスタンス&lt;/p&gt;
+* $mockMethod **string** - &lt;p&gt;Mockのメソッド&lt;/p&gt;
+* $params **array** - &lt;p&gt;Mockのメソッドのパラメータ&lt;/p&gt;
 
 
