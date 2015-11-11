@@ -1,14 +1,39 @@
-WorkflowSaveTest
+M17nBehavior
 ===============
 
-WorkflowSaveTest
+M17nBehavior
+
+登録するコンテンツデータに対して、対応している言語分登録します。<br>
+対応言語を運用途中で追加できません。
+
+コンテンツデータのテーブルに以下のフィールドを保持してください。
+* key
+    異なる言語で同一のデータが登録されます。
+* language_id
+    言語コードに対応するidが登録されます。
+
+コンテンツデータがbelongsToのアソシエーションを持ち、アソシエーション側でも言語ごとにデータがある場合は、
+登録時に外部キーとしてのIDを取得するための情報を指定してください。
+指定内容は、外部キーのフィールド名、アソシエーションモデル名、ID取得条件です。
+
+#### サンプルコード
+public $actsAs = array(
+	'M17n.M17n' => array(
+		'associations' => array(
+			'faq_id' => array(
+				'className' => 'Faqs.Faq',
+			),
+			'category_id' => array(
+				'className' => 'Categories.Category',
+			),
+		)
+	),
+```
 
 
-
-
-* Class name: WorkflowSaveTest
+* Class name: M17nBehavior
 * Namespace: 
-* Parent class: [NetCommonsSaveTest](NetCommonsSaveTest.md)
+* Parent class: [OriginalKeyBehavior](OriginalKeyBehavior.md)
 
 
 
@@ -18,241 +43,198 @@ Properties
 ----------
 
 
-### $_modelName
+### $__originalData
 
-    protected array $_modelName = ''
+    private array $__originalData
 
-Model name
-
-
-
-* Visibility: **protected**
-
-
-### $_methodName
-
-    protected array $_methodName = ''
-
-Method name
+オリジナルデータ
 
 
 
-* Visibility: **protected**
+* Visibility: **private**
 
 
-### $plugin
+### $__beforeLastestData
 
-    public string $plugin
+    private array $__beforeLastestData
 
-Plugin name
-
-
-
-* Visibility: **public**
-
-
-### $_isFixtureMerged
-
-    protected array $_isFixtureMerged = true
-
-Fixture merge
+更新前の最新データ
 
 
 
-* Visibility: **protected**
+* Visibility: **private**
 
 
-### $_defaultFixtures
+### $__target
 
-    protected array $_defaultFixtures = array('plugin.blocks.block', 'plugin.blocks.block_role_permission', 'plugin.boxes.box', 'plugin.boxes.boxes_page', 'plugin.containers.container', 'plugin.containers.containers_page', 'plugin.frames.frame', 'plugin.m17n.language', 'plugin.pages.page', 'plugin.plugin_manager.plugin', 'plugin.roles.role', 'plugin.rooms.roles_room', 'plugin.rooms.room', 'plugin.users.user')
+    private array $__target
 
-Fixtures
+ターゲット言語リスト
 
 
 
-* Visibility: **protected**
+* Visibility: **private**
 
 
 Methods
 -------
 
 
-### setUp
+### setup
 
-    void NetCommonsCakeTestCase::setUp()
+    void M17nBehavior::setup(\Model $model, array $config)
 
-setUp method
-
-
-
-* Visibility: **public**
-* This method is defined by [NetCommonsCakeTestCase](NetCommonsCakeTestCase.md)
-
-
-
-
-### testSave
-
-    void NetCommonsSaveTest::testSave(array $data)
-
-Saveのテスト
+Setup this behavior with the specified configuration settings.
 
 
 
 * Visibility: **public**
-* This method is defined by [NetCommonsSaveTest](NetCommonsSaveTest.md)
 
 
 #### Arguments
+* $model **Model** - &lt;p&gt;Model using this behavior&lt;/p&gt;
+* $config **array** - &lt;p&gt;Configuration settings for $model&lt;/p&gt;
+
+
+
+### beforeSave
+
+    mixed OriginalKeyBehavior::beforeSave(\Model $model, array $options)
+
+beforeSave is called before a model is saved. Returning false from a beforeSave callback
+will abort the save operation.
+
+
+
+* Visibility: **public**
+* This method is defined by [OriginalKeyBehavior](OriginalKeyBehavior.md)
+
+
+#### Arguments
+* $model **Model** - &lt;p&gt;Model using this behavior&lt;/p&gt;
+* $options **array** - &lt;p&gt;Options passed from Model::save().&lt;/p&gt;
+
+
+
+### afterSave
+
+    boolean OriginalKeyBehavior::afterSave(\Model $model, boolean $created, array $options)
+
+afterSave is called after a model is saved.
+
+
+
+* Visibility: **public**
+* This method is defined by [OriginalKeyBehavior](OriginalKeyBehavior.md)
+
+
+#### Arguments
+* $model **Model** - &lt;p&gt;Model using this behavior&lt;/p&gt;
+* $created **boolean** - &lt;p&gt;True if this save created a new record&lt;/p&gt;
+* $options **array** - &lt;p&gt;Options passed from Model::save().&lt;/p&gt;
+
+
+
+### __getOriginalData
+
+    boolean M17nBehavior::__getOriginalData(\Model $model)
+
+オリジナルデータ取得
+
+
+
+* Visibility: **private**
+
+
+#### Arguments
+* $model **Model** - &lt;p&gt;Model using this behavior&lt;/p&gt;
+
+
+
+### __getTargetLanguage
+
+    void M17nBehavior::__getTargetLanguage(\Model $model)
+
+ターゲットデータ取得
+
+
+
+* Visibility: **private**
+
+
+#### Arguments
+* $model **Model** - &lt;p&gt;Model using this behavior&lt;/p&gt;
+
+
+
+### __getFrameId
+
+    boolean M17nBehavior::__getFrameId(\Model $model, array $data, array $target)
+
+frame_id取得
+
+
+
+* Visibility: **private**
+
+
+#### Arguments
+* $model **Model** - &lt;p&gt;Model using this behavior&lt;/p&gt;
+* $data **array** - &lt;p&gt;登録データ&lt;/p&gt;
+* $target **array** - &lt;p&gt;ターゲットデータ&lt;/p&gt;
+
+
+
+### __getBlockId
+
+    boolean M17nBehavior::__getBlockId(\Model $model, array $data, array $target)
+
+block_id取得
+
+
+
+* Visibility: **private**
+
+
+#### Arguments
+* $model **Model** - &lt;p&gt;Model using this behavior&lt;/p&gt;
+* $data **array** - &lt;p&gt;登録データ&lt;/p&gt;
+* $target **array** - &lt;p&gt;ターゲットデータ&lt;/p&gt;
+
+
+
+### __getAssociationsId
+
+    boolean M17nBehavior::__getAssociationsId(\Model $model, array $data)
+
+関連テーブルのID取得
+
+
+
+* Visibility: **private**
+
+
+#### Arguments
+* $model **Model** - &lt;p&gt;Model using this behavior&lt;/p&gt;
 * $data **array** - &lt;p&gt;登録データ&lt;/p&gt;
 
 
 
-### testCallWorkflowBehavior
+### generateKey
 
-    void WorkflowSaveTest::testCallWorkflowBehavior(array $data)
+    string OriginalKeyBehavior::generateKey(string $plugin, string $dataSource)
 
-Test to call WorkflowBehavior::beforeSave
-
-WorkflowBehaviorをモックに置き換えて登録処理を呼び出します。<br>
-WorkflowBehavior::beforeSaveが1回呼び出されることをテストします。<br>
-##### 参考URL
-http://stackoverflow.com/questions/19833495/how-to-mock-a-cakephp-behavior-for-unit-testing]
-
-* Visibility: **public**
-
-
-#### Arguments
-* $data **array** - &lt;p&gt;登録データ&lt;/p&gt;
-
-
-
-### testSaveOnExceptionError
-
-    void NetCommonsSaveTest::testSaveOnExceptionError(array $data, string $mockModel, string $mockMethod)
-
-SaveのExceptionErrorテスト
+Generate key
 
 
 
 * Visibility: **public**
-* This method is defined by [NetCommonsSaveTest](NetCommonsSaveTest.md)
+* This method is **static**.
+* This method is defined by [OriginalKeyBehavior](OriginalKeyBehavior.md)
 
 
 #### Arguments
-* $data **array** - &lt;p&gt;登録データ&lt;/p&gt;
-* $mockModel **string** - &lt;p&gt;Mockのモデル&lt;/p&gt;
-* $mockMethod **string** - &lt;p&gt;Mockのメソッド&lt;/p&gt;
-
-
-
-### testSaveOnValidationError
-
-    void NetCommonsSaveTest::testSaveOnValidationError(array $data, string $mockModel, string $mockMethod)
-
-SaveのValidationErrorテスト
-
-
-
-* Visibility: **public**
-* This method is defined by [NetCommonsSaveTest](NetCommonsSaveTest.md)
-
-
-#### Arguments
-* $data **array** - &lt;p&gt;登録データ&lt;/p&gt;
-* $mockModel **string** - &lt;p&gt;Mockのモデル&lt;/p&gt;
-* $mockMethod **string** - &lt;p&gt;Mockのメソッド&lt;/p&gt;
-
-
-
-### testValidationError
-
-    void NetCommonsSaveTest::testValidationError(array $data, string $field, string $value, string $message, array $overwrite)
-
-Validatesのテスト
-
-
-
-* Visibility: **public**
-* This method is defined by [NetCommonsSaveTest](NetCommonsSaveTest.md)
-
-
-#### Arguments
-* $data **array** - &lt;p&gt;登録データ&lt;/p&gt;
-* $field **string** - &lt;p&gt;フィールド名&lt;/p&gt;
-* $value **string** - &lt;p&gt;セットする値&lt;/p&gt;
-* $message **string** - &lt;p&gt;エラーメッセージ&lt;/p&gt;
-* $overwrite **array** - &lt;p&gt;上書きするデータ&lt;/p&gt;
-
-
-
-### tearDown
-
-    void NetCommonsCakeTestCase::tearDown()
-
-tearDown method
-
-
-
-* Visibility: **public**
-* This method is defined by [NetCommonsCakeTestCase](NetCommonsCakeTestCase.md)
-
-
-
-
-### _mockForReturnFalse
-
-    void NetCommonsModelTestCase::_mockForReturnFalse(string $model, string $mockModel, string $mockMethod)
-
-ExceptionErrorのMockセット
-
-
-
-* Visibility: **protected**
-* This method is defined by [NetCommonsModelTestCase](NetCommonsModelTestCase.md)
-
-
-#### Arguments
-* $model **string** - &lt;p&gt;モデル名&lt;/p&gt;
-* $mockModel **string** - &lt;p&gt;Mockのモデル&lt;/p&gt;
-* $mockMethod **string** - &lt;p&gt;Mockのメソッド&lt;/p&gt;
-
-
-
-### __construct
-
-    void NetCommonsCakeTestCase::__construct(string $name, array $data, string $dataName)
-
-Fixtures load
-
-
-
-* Visibility: **public**
-* This method is defined by [NetCommonsCakeTestCase](NetCommonsCakeTestCase.md)
-
-
-#### Arguments
-* $name **string** - &lt;p&gt;The name parameter on PHPUnit_Framework_TestCase::__construct()&lt;/p&gt;
-* $data **array** - &lt;p&gt;The data parameter on PHPUnit_Framework_TestCase::__construct()&lt;/p&gt;
-* $dataName **string** - &lt;p&gt;The dataName parameter on PHPUnit_Framework_TestCase::__construct()&lt;/p&gt;
-
-
-
-### _testReflectionMethod
-
-    void NetCommonsCakeTestCase::_testReflectionMethod(\Instance $instance, string $mockMethod, array $params)
-
-privateおよびprotectedメソッドのテスト
-
-
-
-* Visibility: **protected**
-* This method is defined by [NetCommonsCakeTestCase](NetCommonsCakeTestCase.md)
-
-
-#### Arguments
-* $instance **Instance** - &lt;p&gt;インスタンス&lt;/p&gt;
-* $mockMethod **string** - &lt;p&gt;Mockのメソッド&lt;/p&gt;
-* $params **array** - &lt;p&gt;Mockのメソッドのパラメータ&lt;/p&gt;
+* $plugin **string** - &lt;p&gt;Plugin name&lt;/p&gt;
+* $dataSource **string** - &lt;p&gt;The name of the DataSource, as defined in app/Config/database.php&lt;/p&gt;
 
 
