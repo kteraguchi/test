@@ -1,153 +1,19 @@
-AuthorizationKeyBehavior
-===============
+# VisualCaptcha
+=======
 
-AuthorizationKeyBehavior Behavior
+画像認証機能を提供します。<br>
 
-認証キー情報を登録、取得します。
-モデル名、コンテンツID、認証キーをAuthorizationKeyモデルに登録します。
-削除時も該当する認証キーデータを削除します。
 
-#### サンプルコード
-```
-public $actsAs = array(
-'AuthorizationKeys.AuthorizationKey'
-);
-```
+[![Build Status](https://travis-ci.org/NetCommons3/VisualCaptcha.svg?branch=master)](https://travis-ci.org/NetCommons3/VisualCaptcha)
+[![Coverage Status](https://img.shields.io/coveralls/NetCommons3/VisualCaptcha.svg)](https://coveralls.io/r/NetCommons3/VisualCaptcha?branch=master)
 
+| dependencies | status |
+| ------------ | ------ |
+| composer.json | [![Dependency Status](https://www.versioneye.com/user/projects/5629b1180c4406000a0008cb/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5629b1180c4406000a0008cb) |
 
-* Class name: AuthorizationKeyBehavior
-* Namespace: 
-* Parent class: ModelBehavior
+### 概要
+ロボットでのアクセスを防ぐための、画像認証機能を提供します。<br>
+利用するコントローラーでVisualCaptchaComponentを定義してください。
 
-
-
-
-
-Properties
-----------
-
-
-### $settings
-
-    public array $settings
-
-
-
-
-
-* Visibility: **public**
-
-
-### $_deleteTargetData
-
-    protected null $_deleteTargetData = null
-
-
-
-
-
-* Visibility: **protected**
-
-
-Methods
--------
-
-
-### _getModel
-
-    \AuthorizationKey AuthorizationKeyBehavior::_getModel()
-
-認証キーモデルを返す
-
-
-
-* Visibility: **protected**
-
-
-
-
-### setup
-
-    void AuthorizationKeyBehavior::setup(\Model $Model, array $settings)
-
-setup
-
-
-
-* Visibility: **public**
-
-
-#### Arguments
-* $Model **Model** - &lt;p&gt;モデル&lt;/p&gt;
-* $settings **array** - &lt;p&gt;設定値&lt;/p&gt;
-
-
-
-### afterSave
-
-    void AuthorizationKeyBehavior::afterSave(\Model $Model, boolean $created, array $options)
-
-認証キー保存処理
-
-
-
-* Visibility: **public**
-
-
-#### Arguments
-* $Model **Model** - &lt;p&gt;モデル&lt;/p&gt;
-* $created **boolean** - &lt;p&gt;新規作成&lt;/p&gt;
-* $options **array** - &lt;p&gt;options&lt;/p&gt;
-
-
-
-### afterFind
-
-    array AuthorizationKeyBehavior::afterFind(\Model $Model, mixed $results, boolean $primary)
-
-認証キー情報をFind結果にまぜる
-
-
-
-* Visibility: **public**
-
-
-#### Arguments
-* $Model **Model** - &lt;p&gt;モデル&lt;/p&gt;
-* $results **mixed** - &lt;p&gt;Find結果&lt;/p&gt;
-* $primary **boolean** - &lt;p&gt;primary&lt;/p&gt;
-
-
-
-### beforeDelete
-
-    boolean AuthorizationKeyBehavior::beforeDelete(\Model $Model, boolean $cascade)
-
-afterDeleteで使いたいので削除前に削除対象のデータを保持しておく
-
-
-
-* Visibility: **public**
-
-
-#### Arguments
-* $Model **Model** - &lt;p&gt;認証キーを使ってるモデル&lt;/p&gt;
-* $cascade **boolean** - &lt;p&gt;cascade&lt;/p&gt;
-
-
-
-### afterDelete
-
-    void AuthorizationKeyBehavior::afterDelete(\Model $Model)
-
-削除されたデータに関連する認証キーデータのクリーンアップ
-
-
-
-* Visibility: **public**
-
-
-#### Arguments
-* $Model **Model** - &lt;p&gt;認証キーを使ってるモデル&lt;/p&gt;
-
+#### [VisualCaptchaComponent](https://github.com/NetCommons3/NetCommons3Docs/blob/master/phpdocMd/VisualCaptcha/VisualCaptchaComponent.md#visualcaptchacomponent)
 
