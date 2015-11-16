@@ -1,40 +1,52 @@
-M17nBehavior
+AuthorizationKeyComponent
 ===============
 
-M17nBehavior
+AuthorizationKey Component
 
-登録するコンテンツデータに対して、対応している言語分登録します。<br>
-対応言語を運用途中で追加できません。
+キー認証画面へのリダイレクト、認証処理を行います。<br>
+利用方式、対象アクション、認証要素key名称を指定してください。
 
-コンテンツデータのテーブルに以下のフィールドを保持してください。
-* key
-    異なる言語で同一のデータが登録されます。
-* language_id
-    言語コードに対応するidが登録されます。
-
-コンテンツデータがbelongsToのアソシエーションを持ち、アソシエーション側でも言語ごとにデータがある場合は、
-登録時に外部キーとしてのIDを取得するための情報を指定してください。<br>
-指定内容は、外部キーのフィールド名、アソシエーションモデル名、ID取得条件です。
-
-#### サンプルコード
-```
-public $actsAs = array(
-	'M17n.M17n' => array(
-		'associations' => array(
-			'faq_id' => array(
-				'className' => 'Faqs.Faq',
-			),
-			'category_id' => array(
-				'className' => 'Categories.Category',
-			),
-		)
-	),
-```
+[利用方式](#operationtype)<br>
+[対象アクション](#operationtype)
 
 
-* Class name: M17nBehavior
+* Class name: AuthorizationKeyComponent
 * Namespace: 
-* Parent class: [OriginalKeyBehavior](OriginalKeyBehavior.md)
+* Parent class: Component
+
+
+
+Constants
+----------
+
+
+### OPERATION_REDIRECT
+
+    const OPERATION_REDIRECT = 'redirect'
+
+
+
+
+
+### OPERATION_EMBEDDING
+
+    const OPERATION_EMBEDDING = 'embedding'
+
+
+
+
+
+### OPERATION_POPUP
+
+    const OPERATION_POPUP = 'popup'
+
+
+
+
+
+### OPERATION_NONE
+
+    const OPERATION_NONE = 'none'
 
 
 
@@ -44,48 +56,203 @@ Properties
 ----------
 
 
-### $__originalData
+### $components
 
-    private array $__originalData
+    public array $components = array('Session', 'Flash', 'RequestHandler', 'NetCommons.NetCommons')
 
-オリジナルデータ
-
-
-
-* Visibility: **private**
-
-
-### $__beforeLastestData
-
-    private array $__beforeLastestData
-
-更新前の最新データ
+Other components utilized by AuthComponent
 
 
 
-* Visibility: **private**
+* Visibility: **public**
 
 
-### $__target
+### $operationType
 
-    private array $__target
+    public string $operationType = \AuthorizationKeyComponent::OPERATION_EMBEDDING
 
-ターゲット言語リスト
+利用方式
+
+* OPERATION_REDIRECT<br>
+切り替わり方式<br>
+認証が必要な画面を表示する前に、キー認証画面が自動的に表示される方式です。<br>
+キー認証に成功した後、認証が必要な画面を表示します。<br>
+この場合、キー認証画面、認証Postを当プラグインが処理するため、、
+利用プラグインは、AuthorizationKeyを設定するのみです。<br>
+対象アクション名も指定してください。
+
+#### サンプルコード
+```
+public $components = array(
+	'AuthorizationKeys.AuthorizationKey' => array(
+		'operationType' => AuthorizationKeyComponent::OPERATION_REDIRECT,
+		'targetAction' => 'answer'
+	)
+)
+```
+
+* OPERATION_EMBEDDING<br>
+埋め込み方式(デフォルト)<br>
+認証が必要な画面に、キー認証パーツを埋め込む方式です。<br>
+切り替わり方式だと画像認証画面だけが表示されることになるが、埋め込み方式は認証が必要な画面の任意の場所に埋め込めます。<br>
+この場合は、AuthorizationKeyComponentを設定、viewファイルへのedit_form.ctpの埋め込み、
+正しい回答がされたかのチェックを行う必要があります。<br>
+
+#### サンプルコード
+##### Controller
+```
+public $components = array(
+	'AuthorizationKeys.AuthorizationKey' => array(
+		'operationType' => AuthorizationKeyComponent::OPERATION_EMBEDDING
+	)
+)
+```
+##### View
+```
+<?php
+	echo $this->element('AuthorizationKeys.edit_form');
+?>
+```
+
+* OPERATION_POPUP<br>
+ポップアップ方式<br>
+認証が必要なリンクをクリックされた際に、ポップアップでキー認証画面を表示する方式です。<br>
+キー認証に成功した後、リンク先を表示します。<br>
+この場合、キー認証画面、認証Postを当プラグインが処理するため、、
+利用プラグインは、AuthorizationKeyComponentを設定するのみです。<br>
+対象アクション名も指定してください。
+
+#### サンプルコード
+```
+public $components = array(
+	'AuthorizationKeys.AuthorizationKey' => array(
+		'operationType' => AuthorizationKeyComponent::OPERATION_POPUP,
+		'targetAction' => 'answer'
+	)
+)
+```
+
+* Visibility: **public**
+
+
+### $controller
+
+    public object $controller = null
+
+call controller w/ associations
 
 
 
-* Visibility: **private**
+* Visibility: **public**
+
+
+### $targetAction
+
+    public string $targetAction = null
+
+authorization key redirect target controller action
+
+
+
+* Visibility: **public**
+
+
+### $model
+
+    public string $model = null
+
+authorization key target model name
+
+
+
+* Visibility: **public**
+
+
+### $contentId
+
+    public integer $contentId = null
+
+authorization key target content id
+
+
+
+* Visibility: **public**
+
+
+### $additionalId
+
+    public string $additionalId = null
+
+authorization key target additional id
+
+
+
+* Visibility: **public**
+
+
+### $AuthorizeKeyAction
+
+    public array $AuthorizeKeyAction = array('plugin' => 'authorization_keys', 'controller' => 'authorization_keys', 'action' => 'view')
+
+切り替えタイプのときの切り替え先画面のURLデフォルト値
+デフォルトの認証キー画面では困る場合はこの構造データを変更してください
+
+
+
+* Visibility: **public**
+
+
+### $returnUrl
+
+    public array $returnUrl = array()
+
+認証後戻るURL
+切り替え型の時しか使わない
+切り替え型で、認証キー成功時戻る先のURL
+
+
+
+* Visibility: **public**
+
+
+### $_hashKey
+
+    protected string $_hashKey = ''
+
+切り替え方式、埋め込み方式の場合
+キー入力画面を表示する前のタイミングでセッションに取り扱い認証キー情報を書き込む
+その書き込むときのセッションキー情報
+
+
+
+* Visibility: **protected**
 
 
 Methods
 -------
 
 
-### setup
+### initialize
 
-    void M17nBehavior::setup(\Model $model, array $config)
+    void AuthorizationKeyComponent::initialize(\Controller $controller)
 
-Setup this behavior with the specified configuration settings.
+Called before the Controller::beforeFilter().
+
+
+
+* Visibility: **public**
+
+
+#### Arguments
+* $controller **Controller** - &lt;p&gt;Controller with components to initialize&lt;/p&gt;
+
+
+
+### startup
+
+    void AuthorizationKeyComponent::startup(\Controller $controller)
+
+Called after the Controller::beforeFilter() and before the controller action
 
 
 
@@ -93,149 +260,99 @@ Setup this behavior with the specified configuration settings.
 
 
 #### Arguments
-* $model **Model** - &lt;p&gt;Model using this behavior&lt;/p&gt;
-* $config **array** - &lt;p&gt;Configuration settings for $model&lt;/p&gt;
+* $controller **Controller** - &lt;p&gt;Controller with components to startup&lt;/p&gt;
 
 
 
-### beforeSave
+### _redirectStartup
 
-    mixed OriginalKeyBehavior::beforeSave(\Model $model, array $options)
+    void AuthorizationKeyComponent::_redirectStartup(\Controller $controller)
 
-beforeSave is called before a model is saved. Returning false from a beforeSave callback
-will abort the save operation.
+_redirectStartup
+認証に成功したあとの戻りURLをセッションに保存して
+切り替え型の画面を呼び出す
+
+
+
+* Visibility: **protected**
+
+
+#### Arguments
+* $controller **Controller** - &lt;p&gt;Controller with components to startup&lt;/p&gt;
+
+
+
+### _popupStartup
+
+    void AuthorizationKeyComponent::_popupStartup(\Controller $controller)
+
+_popupStartup
+POPUP型の場合はGetアクセスをはじく
+POSTが来たときは、送信された認証キーとControllerが指定しているmodel, contentId, additionalIdでDBからデータを取り出し
+マッチするか確認する
+一致しない場合は、前の画面を再度呼び出す
+
+
+
+* Visibility: **protected**
+
+
+#### Arguments
+* $controller **Controller** - &lt;p&gt;Controller with components to startup&lt;/p&gt;
+
+
+
+### getReturnUrl
+
+    string AuthorizationKeyComponent::getReturnUrl()
+
+getReturnUrl get return screen url
 
 
 
 * Visibility: **public**
-* This method is defined by [OriginalKeyBehavior](OriginalKeyBehavior.md)
-
-
-#### Arguments
-* $model **Model** - &lt;p&gt;Model using this behavior&lt;/p&gt;
-* $options **array** - &lt;p&gt;Options passed from Model::save().&lt;/p&gt;
 
 
 
-### afterSave
 
-    boolean OriginalKeyBehavior::afterSave(\Model $model, boolean $created, array $options)
+### check
 
-afterSave is called after a model is saved.
+    boolean AuthorizationKeyComponent::check()
+
+check input response
 
 
 
 * Visibility: **public**
-* This method is defined by [OriginalKeyBehavior](OriginalKeyBehavior.md)
-
-
-#### Arguments
-* $model **Model** - &lt;p&gt;Model using this behavior&lt;/p&gt;
-* $created **boolean** - &lt;p&gt;True if this save created a new record&lt;/p&gt;
-* $options **array** - &lt;p&gt;Options passed from Model::save().&lt;/p&gt;
 
 
 
-### __getOriginalData
 
-    boolean M17nBehavior::__getOriginalData(\Model $model)
+### validateKey
 
-オリジナルデータ取得
+    boolean AuthorizationKeyComponent::validateKey(array $data)
 
-
-
-* Visibility: **private**
-
-
-#### Arguments
-* $model **Model** - &lt;p&gt;Model using this behavior&lt;/p&gt;
-
-
-
-### __getTargetLanguage
-
-    void M17nBehavior::__getTargetLanguage(\Model $model)
-
-ターゲットデータ取得
-
-
-
-* Visibility: **private**
-
-
-#### Arguments
-* $model **Model** - &lt;p&gt;Model using this behavior&lt;/p&gt;
-
-
-
-### __getFrameId
-
-    boolean M17nBehavior::__getFrameId(\Model $model, array $data, array $target)
-
-frame_id取得
-
-
-
-* Visibility: **private**
-
-
-#### Arguments
-* $model **Model** - &lt;p&gt;Model using this behavior&lt;/p&gt;
-* $data **array** - &lt;p&gt;登録データ&lt;/p&gt;
-* $target **array** - &lt;p&gt;ターゲットデータ&lt;/p&gt;
-
-
-
-### __getBlockId
-
-    boolean M17nBehavior::__getBlockId(\Model $model, array $data, array $target)
-
-block_id取得
-
-
-
-* Visibility: **private**
-
-
-#### Arguments
-* $model **Model** - &lt;p&gt;Model using this behavior&lt;/p&gt;
-* $data **array** - &lt;p&gt;登録データ&lt;/p&gt;
-* $target **array** - &lt;p&gt;ターゲットデータ&lt;/p&gt;
-
-
-
-### __getAssociationsId
-
-    boolean M17nBehavior::__getAssociationsId(\Model $model, array $data)
-
-関連テーブルのID取得
-
-
-
-* Visibility: **private**
-
-
-#### Arguments
-* $model **Model** - &lt;p&gt;Model using this behavior&lt;/p&gt;
-* $data **array** - &lt;p&gt;登録データ&lt;/p&gt;
-
-
-
-### generateKey
-
-    string OriginalKeyBehavior::generateKey(string $plugin, string $dataSource)
-
-Generate key
+check input response
 
 
 
 * Visibility: **public**
-* This method is **static**.
-* This method is defined by [OriginalKeyBehavior](OriginalKeyBehavior.md)
 
 
 #### Arguments
-* $plugin **string** - &lt;p&gt;Plugin name&lt;/p&gt;
-* $dataSource **string** - &lt;p&gt;The name of the DataSource, as defined in app/Config/database.php&lt;/p&gt;
+* $data **array** - &lt;p&gt;Hash data for check&lt;/p&gt;
+
+
+
+### _setErrorMessage
+
+    void AuthorizationKeyComponent::_setErrorMessage()
+
+set error message
+
+
+
+* Visibility: **protected**
+
 
 
