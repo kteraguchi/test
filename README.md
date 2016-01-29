@@ -1,3 +1,5 @@
+<link href="https://raw.githubusercontent.com/kteraguchi/test/master/sample.css" media="all" rel="stylesheet">
+
 # ContentComments
 ContentComments for NetCommons3
 
@@ -8,7 +10,6 @@ ContentComments for NetCommons3
 | ------------ | ------ |
 | composer.json | [![Dependency Status](https://www.versioneye.com/user/projects/5539e4a10b24229e14000002/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5539e4a10b24229e14000002) |
 
-<link href="https://raw.githubusercontent.com/kteraguchi/test/master/sample.css" media="all" rel="stylesheet">
 <style>
   .markdown-body h4 {
     font-size: 1.15em;
