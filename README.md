@@ -8,6 +8,12 @@ ContentComments for NetCommons3
 | ------------ | ------ |
 | composer.json | [![Dependency Status](https://www.versioneye.com/user/projects/5539e4a10b24229e14000002/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5539e4a10b24229e14000002) |
 
+<style>
+  .markdown-body h4 {
+    font-size: 1.15em;
+  }
+</style>
+
 ### 概要
 コンテンツの一覧にコメント数を表示する機能と、コンテンツの詳細でコメントを投稿する機能を提供します。<br>
 利用するプラグインはコメントの使用有無(use_comment)、コメントの承認有無(use_comment_approval)を定義してください。<br>
