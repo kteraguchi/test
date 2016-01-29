@@ -1,150 +1,131 @@
-CategoryHelper
-===============
+# ContentComments
+ContentComments for NetCommons3
 
-Category Helper
+[![Build Status](https://api.travis-ci.org/NetCommons3/ContentComments.svg?branch=master)](https://travis-ci.org/NetCommons3/ContentComments)
+[![Coverage Status](https://img.shields.io/coveralls/NetCommons3/ContentComments.svg)](https://coveralls.io/r/NetCommons3/ContentComments?branch=master)
 
-カテゴリーの選択要素を提供します。<br>
-[一覧での絞り込み](#dropdowntoggle)<br>
-[コンテンツ登録時の選択](#select)<br>
+| dependencies | status |
+| ------------ | ------ |
+| composer.json | [![Dependency Status](https://www.versioneye.com/user/projects/5539e4a10b24229e14000002/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5539e4a10b24229e14000002) |
 
+### 概要
+コンテンツの一覧にコメント数を表示する機能と、コンテンツの詳細でコメントを投稿する機能を提供します。<br>
+利用するプラグインはコメントの使用有無(use_comment)、コメントの承認有無(use_comment_approval)を定義してください。
 
-* Class name: CategoryHelper
-* Namespace: 
-* Parent class: [AppHelper](AppHelper.md)
+#### コンテンツの一覧にコメント数を表示
+ContentCommentBehaviorとContentCommentHelperを使用します。<br>
+コメントと紐づくモデルにContentCommentBehavior、コンテンツ一覧のコントローラーにContentCommentHelperを定義してください。
 
+##### サンプルコード
+###### コントローラー
+```php
+class VideosController extends VideosAppController {
 
-
-
-
-Properties
-----------
-
-
-### $helpers
-
-    public array $helpers = array('Html', 'NetCommons.NetCommonsForm', 'NetCommons.NetCommonsHtml')
-
-Other helpers used by FormHelper
-
-
-
-* Visibility: **public**
-
-
-Methods
--------
-
-
-### beforeRender
-
-    void CategoryHelper::beforeRender(string $viewFile)
-
-Before render callback. beforeRender is called before the view file is rendered.
-
-Overridden in subclasses.
-
-* Visibility: **public**
-
-
-#### Arguments
-* $viewFile **string** - &lt;p&gt;The view file that is going to be rendered&lt;/p&gt;
-
-
-
-### dropDownToggle
-
-    string CategoryHelper::dropDownToggle(array $options)
-
-Output categories drop down toggle
-
-一覧での絞り込みを行う要素を提供します。
-
-#### サンプルコード
-```
-<?php
-	echo $this->Category->dropDownToggle(
-		array(
-		'empty' => true,
-		'displayMenu' => true,
-	)
-);
-?>
-```
-#### 出力結果
-```
-<ul class="dropdown-menu" role="menu">
-<li class="active">
-	<a href="/faqs/faq_questions/index/4?frame_id=8">カテゴリ選択</a>
-</li>
-<li>
-	<a href="/faqs/faq_questions/index/4/category_id:1?frame_id=8">国語</a>
-</li>
-<li>
-	<a href="/faqs/faq_questions/index/4/category_id:2?frame_id=8">算数</a>
-</li>
-<li>
-	<a href="/faqs/faq_questions/index/4/category_id:3?frame_id=8">理科</a>
-</li>
-<li>
-	<a href="/faqs/faq_questions/index/4/category_id:4?frame_id=8">社会</a>
-</li>
-</ul>
-```
-
-* Visibility: **public**
-
-
-#### Arguments
-* $options **array** - &lt;p&gt;Array of options and HTML arguments.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;empty&lt;/code&gt;: String is empty label.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;header&lt;/code&gt;: String is header label.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;divider&lt;/code&gt;: True is divider.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;displayMenu&lt;/code&gt;: True is display menu. False is &lt;li&gt; tag only.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;displayEmpty&lt;/code&gt;: True is empty display. False is not display.&lt;/li&gt;
-&lt;/ul&gt;
-
-
-
-### select
-
-    string CategoryHelper::select(string $fieldName, array $attributes)
-
-Output categories select element
-
-コンテンツ登録時のカテゴリー選択要素を提供します。
-
-#### サンプルコード
-```
-<?php
-	echo $this->Category->select(
-		'FaqQuestion.category_id',
-		array('empty' => true)
+	public $uses = array(
+		'Videos.Video',
+		'Videos.VideoBlockSetting'
 	);
+
+	public $helpers = array(
+		'ContentComments.ContentComment' => array(
+			'viewVarsKey' => array(
+				'useComment' => 'videoBlockSetting.use_comment',
+				'useApproval' => 'videoBlockSetting.use_comment_approval'
+			)
+		)
+	);
+
+	public function index() {
+		$query = array(
+			'conditions' => array(
+				'VideoBlockSetting.block_key' => Current::read('Block.key')
+			)
+		);
+		$viewVars['videoBlockSetting'] = $this->VideoBlockSetting->find('first', $query);
+		$viewVars['videos'] = $this->Video->find('all');
+
+		$this->set($viewVars);
+	}
+}
+```
+
+###### モデル
+```php
+class Video extends VideoAppModel {
+	public $actsAs = array(
+		'ContentComments.ContentComment'
+	);
+}
+```
+
+###### ビュー（ctpテンプレート）
+```php
+<?php
+	foreach ($videos as $video) {
+		echo $video['Video']['title'];
+		echo $this->ContentComment->count($video);
+	}
 ?>
 ```
-#### 出力結果
+
+<!--
+##### [ContentCommentBehavior](https://github.com/NetCommons3/NetCommons3Docs/blob/master/phpdocMd/AuthorizationKeys/AuthorizationKeyComponent.md#authorizationkeycomponent)
+##### [ContentCommentHelper](https://github.com/NetCommons3/NetCommons3Docs/blob/master/phpdocMd/AuthorizationKeys/AuthorizationKeyComponent.md#authorizationkeycomponent)
+ -->
+
+#### コンテンツの詳細でコメントを投稿する
+ContentCommentsComponentとContentCommentHelperを使用します。<br>
+コンテンツ詳細のコントローラーにContentCommentsComponentを定義してください。
+
+##### サンプルコード
+###### コントローラー
+```php
+class VideosController extends VideosAppController {
+
+	public $uses = array(
+		'Videos.Video',
+		'Videos.VideoBlockSetting'
+	);
+
+	public $components = array(
+		'ContentComments.ContentComments' => array(
+			'viewVarsKey' => array(
+				'useComment' => 'videoBlockSetting.use_comment',
+				'useApproval' => 'videoBlockSetting.use_comment_approval'
+			),
+			'allow' => array('view')
+		)
+	)
+
+	public function view($videoKey) {
+		$query = array(
+			'conditions' => array(
+				'VideoBlockSetting.block_key' => Current::read('Block.key')
+			)
+		);
+		$viewVars['videoBlockSetting'] = $this->VideoBlockSetting->find('first', $query);
+
+		$query = array(
+			'conditions' => array(
+				'Video.key' => $videoKey,
+				'Video.language_id' => Current::read('Language.id')
+			)
+		);
+		$viewVars['video'] = $this->Video->find('first', $query);
+
+		$this->set($viewVars);
+	}
+}
 ```
-<div class="form-group">
-	<div class="input select">
-		<label for="FaqQuestionCategoryId">カテゴリ</label>
-		<select name="data[FaqQuestion][category_id]" class="form-control" id="FaqQuestionCategoryId">
-			<option value="0">カテゴリ選択</option>
-			<option value="1">国語</option>
-			<option value="2">算数</option>
-			<option value="3">理科</option>
-			<option value="4">社会</option>
-		</select>
-	</div>
-	<div class="has-error"></div>
-</div>
+
+###### ビュー（ctpテンプレート）
+```
+<?php
+	echo $video['title'];
+	echo $this->ContentComment->index($video['Video']['key']);
+?>
 ```
 
-* Visibility: **public**
-
-
-#### Arguments
-* $fieldName **string** - &lt;p&gt;This should be &quot;Modelname.fieldname&quot;&lt;/p&gt;
-* $attributes **array** - &lt;p&gt;Array of attributes and HTML arguments.&lt;/p&gt;
-
+##### [ContentCommentsComponent](https://github.com/NetCommons3/NetCommons3Docs/blob/master/phpdocMd/AuthorizationKeys/AuthorizationKeyComponent.md#authorizationkeycomponent)
+##### [ContentCommentHelper](https://github.com/NetCommons3/NetCommons3Docs/blob/master/phpdocMd/AuthorizationKeys/AuthorizationKeyComponent.md#authorizationkeycomponent)
 
