@@ -10,11 +10,13 @@ ContentComments for NetCommons3
 
 ### 概要
 コンテンツの一覧にコメント数を表示する機能と、コンテンツの詳細でコメントを投稿する機能を提供します。<br>
-利用するプラグインはコメントの使用有無(use_comment)、コメントの承認有無(use_comment_approval)を定義してください。
+利用するプラグインはコメントの使用有無(use_comment)、コメントの承認有無(use_comment_approval)を定義してください。<br>
+<br>
 
 #### コンテンツの一覧にコメント数を表示
 ContentCommentBehaviorとContentCommentHelperを使用します。<br>
-コメントと紐づくモデルにContentCommentBehavior、コンテンツ一覧のコントローラーにContentCommentHelperを定義してください。
+コメントと紐づくモデルにContentCommentBehavior、<br>
+コンテンツ一覧のコントローラーにContentCommentHelperを定義してください。
 
 ##### サンプルコード
 ###### コントローラー
@@ -72,6 +74,7 @@ class Video extends VideoAppModel {
 ##### [ContentCommentBehavior](https://github.com/NetCommons3/NetCommons3Docs/blob/master/phpdocMd/AuthorizationKeys/AuthorizationKeyComponent.md#authorizationkeycomponent)
 ##### [ContentCommentHelper](https://github.com/NetCommons3/NetCommons3Docs/blob/master/phpdocMd/AuthorizationKeys/AuthorizationKeyComponent.md#authorizationkeycomponent)
  -->
+<br>
 
 #### コンテンツの詳細でコメントを投稿する
 ContentCommentsComponentとContentCommentHelperを使用します。<br>
@@ -126,6 +129,7 @@ class VideosController extends VideosAppController {
 ?>
 ```
 
+<!--
 ##### [ContentCommentsComponent](https://github.com/NetCommons3/NetCommons3Docs/blob/master/phpdocMd/AuthorizationKeys/AuthorizationKeyComponent.md#authorizationkeycomponent)
 ##### [ContentCommentHelper](https://github.com/NetCommons3/NetCommons3Docs/blob/master/phpdocMd/AuthorizationKeys/AuthorizationKeyComponent.md#authorizationkeycomponent)
-
+ -->
